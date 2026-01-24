@@ -1,11 +1,10 @@
 import prisma from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const { token, password, name } = await req.json();
+    const { token, name } = await req.json();
 
     if (!token) {
       return NextResponse.json({ error: "Token is required" }, { status: 400 });
@@ -27,42 +26,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if User exists
-    let user = await prisma.user.findUnique({
+    // Check if User exists (Frontend should have ensured this via signUp)
+    const user = await prisma.user.findUnique({
       where: { email: invitation.email },
     });
 
-    // New User Creation Logic
-    if (!user) {
-      if (!password || !name) {
-        return NextResponse.json(
-          { error: "Name and Password are required for new users" },
-          { status: 400 },
-        );
-      }
-
-      // Use Better-Auth to create user
-      const signUpResponse = await auth.api.signUpEmail({
-        body: {
-          email: invitation.email,
-          password,
-          name,
-        },
-      });
-
-      if (!signUpResponse?.user) {
-        throw new Error("Failed to create user");
-      }
-
-      user = await prisma.user.findUnique({
-        where: { id: signUpResponse.user.id },
-      });
-    }
-
     if (!user) {
       return NextResponse.json(
-        { error: "User resolution failed" },
-        { status: 500 },
+        { error: "User account not found. Please sign up first." },
+        { status: 400 },
       );
     }
 
@@ -72,9 +44,6 @@ export async function POST(req: Request) {
     });
 
     if (existingMember) {
-      // Should technically be caught by UI or Invite creation, but just in case
-      // If they are in another company, this invite is effectively void unless we support multi-company (which we don't yet for typical users?)
-      // For now, fail safely
       if (existingMember.companyId !== invitation.companyId) {
         return NextResponse.json(
           { error: "User is already a member of another company." },
@@ -88,21 +57,17 @@ export async function POST(req: Request) {
     }
 
     // Add Member & Close Invite
-    await prisma.$transaction(async (tx) => {
-      // 1. Ensure UserProfile exists (if creating new user via better-auth, profile might not exist depending on hook, but we need one)
-      // Better-Auth creates 'User' and 'Account'. We have 'UserProfile'.
-      // If we just created the user, we need to create the profile.
-      // If user existed, check profile.
-
-      const existingProfile = await tx.userProfile.findUnique({
-        where: { userId: user!.id },
+    const userProfileId = await prisma.$transaction(async (tx) => {
+      // 1. Ensure UserProfile exists
+      let profile = await tx.userProfile.findUnique({
+        where: { userId: user.id },
       });
 
-      if (!existingProfile) {
-        await tx.userProfile.create({
+      if (!profile) {
+        profile = await tx.userProfile.create({
           data: {
-            userId: user!.id,
-            name: name || user!.name || "User",
+            userId: user.id,
+            name: name || user.name || "User",
           },
         });
       }
@@ -111,7 +76,7 @@ export async function POST(req: Request) {
       await tx.companyMember.create({
         data: {
           companyId: invitation.companyId,
-          userId: user!.id,
+          userId: user.id,
           role: invitation.role,
         },
       });
@@ -121,15 +86,14 @@ export async function POST(req: Request) {
         where: { id: invitation.id },
         data: { acceptedAt: new Date() },
       });
+
+      return profile.id;
     });
 
     // Audit
     await logAudit({
       companyId: invitation.companyId,
-      userId: user.id, // We don't have a session ID here necessarily properly set if they aren't logged in, but we know WHO it is.
-      // Wait, logAudit usually expects authorized user ID.
-      // In this case, the Action Performer is the User themselves (accepting invite).
-      // We can look up their profile ID.
+      userId: userProfileId,
       action: "JOIN_COMPANY",
       entity: "Invitation",
       entityId: invitation.id,
@@ -139,7 +103,7 @@ export async function POST(req: Request) {
   } catch (error: unknown) {
     console.error("Accept Invite Error:", error);
     const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
+      error instanceof Error ? error.message : "Internal Server Error";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

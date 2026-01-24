@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Building2, Loader2, ArrowRight } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Mail,
+  Phone,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function CreateCompanyPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -34,146 +39,203 @@ export default function CreateCompanyPage() {
         throw new Error(data.error || "Failed to create company");
       }
 
-      // Success! Redirect to dashboard (which puts us in Phase 3 territory, but fulfills the flow)
-      // For now, reload or go to a protected route
       window.location.href = "/dashboard";
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center items-center gap-2 mb-6">
-          <div className="bg-blue-600 p-2 rounded-lg">
-            <Building2 className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-2xl font-bold text-gray-900">VyaparFlow</span>
-        </Link>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Setup Your Organization
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Create a workspace to manage your procurement and team.
-        </p>
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div className="absolute -top-[30%] -right-[10%] w-[70rem] h-[70rem] rounded-full bg-indigo-50/50 blur-3xl" />
+        <div className="absolute top-[20%] -left-[10%] w-[50rem] h-[50rem] rounded-full bg-blue-50/50 blur-3xl" />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-100">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <Link
+          href="/"
+          className="flex justify-center items-center gap-3 mb-8 group"
+        >
+          <div className="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-300">
+            <Building2 className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+            VyaparFlow
+          </span>
+        </Link>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Setup Your Workspace
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Create your organization profile to get started with procurement
+            management.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-[520px] relative z-10">
+        <div className="bg-white py-10 px-8 shadow-xl shadow-gray-200/50 sm:rounded-2xl border border-gray-100 ring-1 ring-gray-900/5">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
+              <div className="rounded-xl bg-red-50 p-4 ring-1 ring-red-100 border-l-4 border-red-500 animate-in fade-in slide-in-from-top-2">
                 <div className="flex">
-                  <div className="text-sm text-red-700">{error}</div>
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="h-5 w-5 text-red-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-red-800">{error}</p>
+                  </div>
                 </div>
               </div>
             )}
 
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Company Name <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="Acme Corp Pvt Ltd"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
+            <div className="space-y-5">
+              <div className="group">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-indigo-600"
+                >
+                  Company Name <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Building2 className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                  </div>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    placeholder="Acme Corp Pvt Ltd"
+                    className="block w-full pl-10 pr-3 py-3 border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all duration-200 sm:text-sm"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="group">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-indigo-600"
+                >
+                  Official Email
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="contact@acme.com"
+                    className="block w-full pl-10 pr-3 py-3 border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all duration-200 sm:text-sm"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div className="group">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-indigo-600"
+                  >
+                    Phone
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Phone className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                    </div>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      className="block w-full pl-10 pr-3 py-3 border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all duration-200 sm:text-sm"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="group">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-indigo-600"
+                >
+                  Office Address
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-3 flex items-start pointer-events-none">
+                    <MapPin className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                  </div>
+                  <textarea
+                    id="address"
+                    name="address"
+                    rows={3}
+                    placeholder="123 Business Park, Tech City..."
+                    className="block w-full pl-10 pr-3 py-3 border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all duration-200 sm:text-sm resize-none"
+                    value={formData.address}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Official Email (Optional)
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="admin@acmecorp.com"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phone Number (Optional)
-              </label>
-              <div className="mt-1">
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Business Address (Optional)
-              </label>
-              <div className="mt-1">
-                <textarea
-                  id="address"
-                  name="address"
-                  rows={3}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={formData.address}
-                  onChange={(e) =>
-                    setFormData({ ...formData, address: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 transition-colors"
+                className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-600/20 active:scale-[0.98]"
               >
                 {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <>
+                    <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                    Creating Workspace...
+                  </>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    Create Workspace <ArrowRight className="w-4 h-4" />
-                  </span>
+                  <>
+                    Create Workspace
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
                 )}
               </button>
             </div>
+
+            <p className="text-center text-xs text-gray-400 mt-4">
+              By creating a workspace, you agree to our{" "}
+              <Link href="#" className="underline hover:text-indigo-600">
+                Terms of Service
+              </Link>
+              .
+            </p>
           </form>
         </div>
       </div>

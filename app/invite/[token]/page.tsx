@@ -79,23 +79,38 @@ export default async function InvitePage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Join {invitation.company.name}
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          You have been invited as <strong>{invitation.role}</strong>
-        </p>
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 bg-[url('/grid-pattern.svg')] p-4">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-900/5">
+        {/* Header with decorative background */}
+        <div className="relative bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-10 text-center sm:px-10">
+          <div
+            className="absolute inset-0 bg-white/10 opacity-30"
+            style={{
+              backgroundImage: "radial-gradient(#fff 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
+            }}
+          ></div>
+          <h2 className="relative text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Join {invitation.company.name}
+          </h2>
+          <p className="relative mt-2 text-blue-100">
+            You&apos;ve been invited to join as{" "}
+            <span className="font-semibold text-white capitalize">
+              {invitation.role.toLowerCase()}
+            </span>
+          </p>
+        </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+        <div className="px-6 py-8 sm:px-10">
           <InviteForm
             token={token}
             email={invitation.email}
             isExistingUser={!!existingUser}
           />
+        </div>
+
+        <div className="bg-gray-50 px-6 py-4 text-center text-xs text-gray-500 border-t border-gray-100">
+          Powered by VyaparFlow
         </div>
       </div>
     </div>
