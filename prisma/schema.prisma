@@ -13,6 +13,46 @@ datasource db {
   provider = "postgresql"
 }
 
+enum CompanyRole {
+  ADMIN
+  PROCUREMENT
+  FINANCE
+  MANAGER
+}
+
+enum VendorType {
+  GOODS
+  SERVICES
+}
+
+enum PRStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum InvoiceStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  MISMATCH
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  PARTIAL
+}
+
 model User {
   id            String    @id
   name          String
@@ -77,3 +117,231 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model Company {
+  id      String  @id @default(uuid())
+  name    String
+  email   String?
+  phone   String?
+  address String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members          CompanyMember[]
+  vendors          Vendor[]
+  purchaseRequests PurchaseRequest[]
+  purchaseOrders   PurchaseOrder[]
+  invoices         Invoice[]
+  payments         Payment[]
+  auditLogs        AuditLog[]
+  invitations      Invitation[]
+}
+
+model UserProfile {
+  id     String  @id @default(uuid())
+  userId String  @unique // references Better Auth User.id
+  name   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships      CompanyMember[]
+  auditLogs        AuditLog[]
+  purchaseRequests PurchaseRequest[]
+  approvals        Approval[]
+}
+
+model CompanyMember {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  userId String
+  user   UserProfile @relation(fields: [userId], references: [userId])
+
+  role     CompanyRole
+  isActive Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, userId])
+}
+
+////////////////////
+// VENDOR MANAGEMENT
+////////////////////
+
+model Vendor {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  name    String
+  email   String?
+  phone   String?
+  address String?
+
+  gstin       String?
+  pan         String?
+  bankAccount String? // masked at UI level
+  ifsc        String?
+
+  vendorType VendorType
+  isActive   Boolean    @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+  invoices       Invoice[]
+}
+
+////////////////////
+// PROCUREMENT FLOW
+////////////////////
+
+model PurchaseRequest {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  createdById String
+  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+
+  title         String
+  description   String?
+  department    String
+  estimatedCost Float
+
+  status PRStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  approvals     Approval[]
+  purchaseOrder PurchaseOrder?
+}
+
+model Approval {
+  id                String          @id @default(uuid())
+  purchaseRequestId String
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])
+
+  approverId String
+  approver   UserProfile @relation(fields: [approverId], references: [id])
+
+  status     ApprovalStatus @default(PENDING)
+  comment    String?
+  approvedAt DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model PurchaseOrder {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  purchaseRequestId String          @unique
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  poNumber     String
+  totalAmount  Float
+  paymentTerms String? // 15 / 30 / 45 days
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices Invoice[]
+}
+
+////////////////////
+// INVOICES & PAYMENTS
+////////////////////
+
+model Invoice {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  invoiceNumber String
+  invoiceDate   DateTime
+
+  subtotal    Float
+  cgst        Float?
+  sgst        Float?
+  igst        Float?
+  totalAmount Float
+
+  status InvoiceStatus @default(PENDING_VERIFICATION)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments Payment[]
+}
+
+model Payment {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  amount Float
+  status PaymentStatus @default(PENDING)
+
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+
+  paidAt DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+////////////////////
+// AUDIT LOGS
+////////////////////
+
+model AuditLog {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  userId String
+  user   UserProfile @relation(fields: [userId], references: [id])
+
+  action   String
+  entity   String
+  entityId String
+  metadata Json?
+
+  createdAt DateTime @default(now())
+}
+
+model Invitation {
+  id        String   @id @default(uuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  email     String
+  role      CompanyRole
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  acceptedAt DateTime?
+
+  @@index([token])
+}
+
