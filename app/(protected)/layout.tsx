@@ -7,6 +7,7 @@ import {
   Settings,
   Users,
   ChevronRight,
+  Truck,
 } from "lucide-react";
 
 export default async function ProtectedLayout({
@@ -56,6 +57,14 @@ export default async function ProtectedLayout({
           >
             <Users className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
             Team Members
+          </Link>
+
+          <Link
+            href="/dashboard/vendors"
+            className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl text-sm font-medium group transition-all duration-200"
+          >
+            <Truck className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            Vendors
           </Link>
 
           <Link
