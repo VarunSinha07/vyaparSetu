@@ -15,9 +15,9 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex font-sans">
+    <div className="min-h-screen bg-[#f8fafc] flex font-sans print:bg-white">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 hidden lg:flex flex-col transition-all duration-300">
+      <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 hidden lg:flex flex-col transition-all duration-300 print:hidden">
         {/* Logo Area */}
         <div className="p-6 border-b border-gray-100 flex items-center gap-3">
           <div className="bg-gradient-to-br from-indigo-600 to-blue-600 p-2 rounded-xl shadow-lg shadow-indigo-600/20">
@@ -53,9 +53,9 @@ export default async function ProtectedLayout({
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 lg:ml-72 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 lg:ml-72 flex flex-col min-w-0 overflow-hidden print:ml-0">
         {/* Mobile Header (Hidden on LG) */}
-        <header className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40">
+        <header className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40 print:hidden">
           <div className="flex items-center gap-2">
             <div className="bg-indigo-600 p-1.5 rounded-lg">
               <Building2 className="w-5 h-5 text-white" />

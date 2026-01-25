@@ -15,7 +15,7 @@ import {
   Send,
   UserCheck,
   Calendar,
-  DollarSign,
+  IndianRupee,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -31,6 +31,7 @@ interface PRWithRelations extends PurchaseRequest {
   createdBy: UserProfile;
   preferredVendor: Vendor | null;
   approvals: (Approval & { approver: UserProfile })[];
+  purchaseOrder: { id: string; poNumber: string } | null;
 }
 
 interface PRDetailsViewProps {
@@ -127,6 +128,27 @@ export default function PRDetailsView({
     }
   };
 
+  const handleCreatePO = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/purchase-orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purchaseRequestId: pr.id }),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      const po = await res.json();
+      toast.success("Purchase Order created successfully");
+      router.push(`/dashboard/purchase-orders/${po.id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Creation failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Permission Logic
   const canEdit =
     pr.status === "DRAFT" &&
@@ -140,6 +162,10 @@ export default function PRDetailsView({
   const canDecide =
     (pr.status === "SUBMITTED" || pr.status === "UNDER_REVIEW") &&
     (currentUser.role === "ADMIN" || currentUser.role === "MANAGER");
+  const canCreatePO =
+    pr.status === "APPROVED" &&
+    !pr.purchaseOrder &&
+    (currentUser.role === "ADMIN" || currentUser.role === "PROCUREMENT");
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
@@ -168,6 +194,25 @@ export default function PRDetailsView({
 
         {/* Action Buttons Toolbar */}
         <div className="flex gap-2">
+          {pr.purchaseOrder && (
+            <Link
+              href={`/dashboard/purchase-orders/${pr.purchaseOrder.id}`}
+              className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-100 transition-all"
+            >
+              <FileText className="w-4 h-4" /> View PO
+            </Link>
+          )}
+
+          {canCreatePO && (
+            <button
+              onClick={handleCreatePO}
+              disabled={loading}
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 shadow-sm hover:shadow-emerald-200 transition-all disabled:opacity-50"
+            >
+              <IndianRupee className="w-4 h-4" /> Create PO
+            </button>
+          )}
+
           {canEdit && (
             <Link
               href={`/dashboard/purchase-requests/${pr.id}/edit`}
@@ -282,7 +327,7 @@ export default function PRDetailsView({
                   Budget Category
                 </label>
                 <p className="mt-1 text-sm font-medium text-gray-900 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-gray-400" />
+                  <IndianRupee className="w-4 h-4 text-gray-400" />
                   {pr.budgetCategory || "Not specified"}
                 </p>
               </div>

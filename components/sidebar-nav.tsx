@@ -8,8 +8,8 @@ import {
   Truck,
   Settings,
   FileText,
+  ShoppingBag,
 } from "lucide-react";
-
 
 const navItems = [
   {
@@ -22,6 +22,12 @@ const navItems = [
     name: "Purchase Requests",
     href: "/dashboard/purchase-requests",
     icon: FileText,
+    exact: false,
+  },
+  {
+    name: "Purchase Orders",
+    href: "/dashboard/purchase-orders",
+    icon: ShoppingBag,
     exact: false,
   },
   {

@@ -22,6 +22,9 @@ export async function GET(
       include: {
         createdBy: true,
         preferredVendor: true,
+        purchaseOrder: {
+          select: { id: true, poNumber: true },
+        },
         approvals: {
           include: {
             approver: true,

@@ -26,8 +26,19 @@ export async function POST(
 
     if (!pr) return new NextResponse("Not Found", { status: 404 });
 
+    // Prevent self-approval
+    if (pr.createdById === context.profileId) {
+      return new NextResponse("You cannot approve your own request", {
+        status: 403,
+      });
+    }
+
     // Allow approval from SUBMITTED or UNDER_REVIEW
-    if (!([PRStatus.SUBMITTED, PRStatus.UNDER_REVIEW] as PRStatus[]).includes(pr.status)) {
+    if (
+      !([PRStatus.SUBMITTED, PRStatus.UNDER_REVIEW] as PRStatus[]).includes(
+        pr.status,
+      )
+    ) {
       return new NextResponse("PR is not in a reviewable state", {
         status: 400,
       });

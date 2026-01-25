@@ -33,6 +33,12 @@ export default async function PurchaseRequestDetailsPage({
           createdAt: "asc",
         },
       },
+      purchaseOrder: {
+        select: {
+          id: true,
+          poNumber: true,
+        },
+      },
     },
   });
 
