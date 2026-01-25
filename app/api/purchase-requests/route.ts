@@ -114,7 +114,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(prs);
+    return NextResponse.json({
+      items: prs,
+      role: context.role,
+    });
   } catch (error) {
     console.error("[PR_LIST]", error);
     return new NextResponse("Internal Error", { status: 500 });

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CompanyRole } from "@/app/generated/prisma/enums";
 import {
   FileText,
   Plus,
@@ -74,6 +75,7 @@ export default function PurchaseRequestsPage() {
   const [prs, setPrs] = useState<
     (PurchaseRequest & { createdBy: { name: string } | null })[]
   >([]);
+  const [userRole, setUserRole] = useState<CompanyRole | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -81,7 +83,8 @@ export default function PurchaseRequestsPage() {
     fetch("/api/purchase-requests")
       .then((res) => res.json())
       .then((data) => {
-        setPrs(data);
+        setPrs(data.items);
+        setUserRole(data.role);
         setLoading(false);
       })
       .catch((err) => {
@@ -108,13 +111,18 @@ export default function PurchaseRequestsPage() {
             Track and manage internal spending requests.
           </p>
         </div>
-        <Link
-          href="/dashboard/purchase-requests/new"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          New Request
-        </Link>
+        {userRole &&
+          (
+            [CompanyRole.ADMIN, CompanyRole.PROCUREMENT] as CompanyRole[]
+          ).includes(userRole) && (
+            <Link
+              href="/dashboard/purchase-requests/new"
+              className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              New Request
+            </Link>
+          )}
       </div>
 
       {/* Filters (simplified for now) */}

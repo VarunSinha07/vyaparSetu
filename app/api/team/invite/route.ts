@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { CompanyRole } from "@/app/generated/prisma/client";
 import { randomUUID } from "crypto";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({
@@ -80,8 +81,28 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // TODO: Send Email with link: /join?token=...
-    console.log(`Invitation created for ${email}: Token ${token}`);
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const inviteLink = `${baseUrl}/invite/${token}`;
+
+    await sendEmail({
+      to: email,
+      subject: "Invitation to join VyaparFlow",
+      text: `You have been invited to join the team on VyaparFlow. Click the link to accept: ${inviteLink}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #333;">Welcome to VyaparFlow</h2>
+          <p style="color: #555;">You have been invited to join the team.</p>
+          <div style="margin: 30px 0;">
+            <a href="${inviteLink}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Accept Invitation</a>
+          </div>
+          <p style="color: #888; font-size: 14px;">Or copy and paste this link into your browser:</p>
+          <p style="color: #4F46E5; font-size: 14px;">${inviteLink}</p>
+          <p style="color: #aaa; font-size: 12px; margin-top: 40px;">This link will expire in 7 days.</p>
+        </div>
+      `,
+    });
+
+    console.log(`Invitation sent to ${email}: Token ${token}`);
 
     return NextResponse.json(invitation);
   } catch (error) {
