@@ -16,21 +16,31 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function NewVendorPage() {
+import { Vendor } from "@/app/generated/prisma/client";
+
+interface VendorFormProps {
+  initialData?: Partial<Vendor>;
+  isEditMode?: boolean;
+}
+
+export default function VendorForm({
+  initialData,
+  isEditMode,
+}: VendorFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   // Form States
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    gstin: "",
-    pan: "",
-    bankAccount: "",
-    ifsc: "",
-    vendorType: "GOODS",
+    name: initialData?.name || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || "",
+    address: initialData?.address || "",
+    gstin: initialData?.gstin || "",
+    pan: initialData?.pan || "",
+    bankAccount: initialData?.bankAccount || "",
+    ifsc: initialData?.ifsc || "",
+    vendorType: initialData?.vendorType || "GOODS",
   });
 
   const handleChange = (
@@ -52,8 +62,13 @@ export default function NewVendorPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/vendors", {
-        method: "POST",
+      const url = isEditMode
+        ? `/api/vendors/${initialData?.id}`
+        : "/api/vendors";
+      const method = isEditMode ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
@@ -63,11 +78,16 @@ export default function NewVendorPage() {
         throw new Error(msg);
       }
 
-      toast.success("Vendor created successfully!");
+      toast.success(
+        isEditMode
+          ? "Vendor updated successfully!"
+          : "Vendor created successfully!",
+      );
       router.push("/dashboard/vendors");
+      router.refresh(); // Refresh server components
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : null;
-      toast.error(message || "Failed to create vendor");
+      toast.error(message || "Failed to save vendor");
     } finally {
       setLoading(false);
     }
@@ -88,10 +108,12 @@ export default function NewVendorPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-indigo-800">
-            New Vendor
+            {isEditMode ? "Edit Vendor" : "New Vendor"}
           </h1>
           <p className="text-sm text-gray-500">
-            Onboard a new supplier by capturing their business and tax details.
+            {isEditMode
+              ? "Update vendor details and tax information."
+              : "Onboard a new supplier by capturing their business and tax details."}
           </p>
         </div>
       </div>
@@ -297,7 +319,7 @@ export default function NewVendorPage() {
             className="px-8 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Create Vendor
+            {isEditMode ? "Update Vendor" : "Create Vendor"}
           </button>
         </div>
       </form>

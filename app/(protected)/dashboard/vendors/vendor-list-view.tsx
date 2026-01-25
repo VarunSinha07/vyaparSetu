@@ -17,12 +17,69 @@ import Link from "next/link";
 
 import { CompanyRole } from "@/app/generated/prisma/enums";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Edit, Trash2, Power } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 export default function VendorListView({ role }: { role: string | null }) {
+  const router = useRouter();
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [vendorToToggle, setVendorToToggle] = useState<string | null>(null);
 
-  const canCreate = role !== CompanyRole.MANAGER;
+  const canCreate =
+    role !== CompanyRole.MANAGER && role !== CompanyRole.FINANCE;
+  const canEdit =
+    role === CompanyRole.ADMIN || role === CompanyRole.PROCUREMENT;
+  const canToggleStatus = role === CompanyRole.ADMIN;
+
+  const handleToggleStatus = async () => {
+    if (!vendorToToggle) return;
+
+    // Find current status first
+    const vendor = vendors.find((v) => v.id === vendorToToggle);
+    if (!vendor) return;
+    const newStatus = !vendor.isActive;
+
+    try {
+      const res = await fetch(`/api/vendors/${vendorToToggle}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed");
+      toast.success(newStatus ? "Vendor Activated" : "Vendor Deactivated");
+      // refresh local state
+      setVendors((prev) =>
+        prev.map((v) =>
+          v.id === vendorToToggle ? { ...v, isActive: newStatus } : v,
+        ),
+      );
+    } catch {
+      toast.error("Failed to update status");
+    } finally {
+      setVendorToToggle(null);
+    }
+  };
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -31,7 +88,7 @@ export default function VendorListView({ role }: { role: string | null }) {
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setVendors(data);
-      } catch (error: unknown) {
+      } catch {
         toast.error("Could not load vendors");
       } finally {
         setLoading(false);
@@ -224,9 +281,59 @@ export default function VendorListView({ role }: { role: string | null }) {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all border border-transparent hover:border-gray-200 hover:shadow-sm">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                      {(canEdit || canDeactivate) && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 active:scale-95">
+                              <MoreHorizontal className="w-5 h-5" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-48 p-1.5 bg-white/95 backdrop-blur-xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl"
+                          >
+                            <DropdownMenuLabel className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 py-1.5 font-sans">
+                              Actions
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-50" />
+                            {canEdit && (
+                              <DropdownMenuItem
+                                className="group flex items-center gap-2.5 px-2.5 py-2 text-sm font-medium text-gray-700 rounded-lg cursor-pointer focus:bg-indigo-50 focus:text-indigo-700 outline-none transition-all duration-200"
+                                onClick={() =>
+                                  router.push(
+                                    `/dashboard/vendors/${vendor.id}/edit`,
+                                  )
+                                }
+                              >
+                                <Edit className="w-4 h-4 text-gray-400 group-focus:text-indigo-600 transition-colors" />
+                                Edit Details
+                              </DropdownMenuItem>
+                            )}
+                            {canToggleStatus && (
+                              <DropdownMenuItem
+                                className={`group flex items-center gap-2.5 px-2.5 py-2 text-sm font-medium rounded-lg cursor-pointer outline-none transition-all duration-200 mt-1 ${
+                                  vendor.isActive
+                                    ? "text-red-600 focus:bg-red-50 focus:text-red-700"
+                                    : "text-green-600 focus:bg-green-50 focus:text-green-700"
+                                }`}
+                                onClick={() => setVendorToToggle(vendor.id)}
+                              >
+                                {vendor.isActive ? (
+                                  <>
+                                    <Trash2 className="w-4 h-4 text-red-400 group-focus:text-red-600 transition-colors" />
+                                    Deactivate
+                                  </>
+                                ) : (
+                                  <>
+                                    <Power className="w-4 h-4 text-green-400 group-focus:text-green-600 transition-colors" />
+                                    Activate
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -235,6 +342,43 @@ export default function VendorListView({ role }: { role: string | null }) {
           </div>
         )}
       </div>
+
+      <AlertDialog
+        open={!!vendorToToggle}
+        onOpenChange={(open) => !open && setVendorToToggle(null)}
+      >
+        <AlertDialogContent className="bg-white rounded-xl shadow-2xl border-0 ring-1 ring-gray-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-gray-900">
+              {vendors.find((v) => v.id === vendorToToggle)?.isActive
+                ? "Deactivate Vendor?"
+                : "Activate Vendor?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 text-base">
+              {vendors.find((v) => v.id === vendorToToggle)?.isActive
+                ? "Are you sure you want to deactivate this vendor? They will be hidden from lists but preserve their history."
+                : "Are you sure you want to activate this vendor? They will become visible and available for new transactions."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 mt-4">
+            <AlertDialogCancel className="rounded-lg border-gray-200 hover:bg-gray-50 hover:text-gray-900">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleToggleStatus}
+              className={`text-white rounded-lg shadow-sm ${
+                vendors.find((v) => v.id === vendorToToggle)?.isActive
+                  ? "bg-red-600 hover:bg-red-700 shadow-red-200"
+                  : "bg-green-600 hover:bg-green-700 shadow-green-200"
+              }`}
+            >
+              {vendors.find((v) => v.id === vendorToToggle)?.isActive
+                ? "Yes, Deactivate"
+                : "Yes, Activate"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

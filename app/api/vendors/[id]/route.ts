@@ -56,43 +56,50 @@ export async function PATCH(
   const { id } = await params;
 
   const body = await req.json();
-  const { action } = body;
 
-  // Handle Deactivation
-  if (action === "deactivate") {
-    // RBAC: Deactivate -> ADMIN Only
+  // General Update Logic
+  // RBAC: Edit -> ADMIN, PROCUREMENT
+  const editRoles: CompanyRole[] = [CompanyRole.ADMIN, CompanyRole.PROCUREMENT];
+
+  if (!context.role || !editRoles.includes(context.role as CompanyRole)) {
+    return new NextResponse("Forbidden", { status: 403 });
+  }
+
+  // Status Change Specific Check (Activate or Deactivate)
+  if (Object.prototype.hasOwnProperty.call(body, "isActive")) {
     if (context.role !== CompanyRole.ADMIN) {
       return new NextResponse(
-        "Forbidden. Only Admins can deactivate vendors.",
+        "Forbidden. Only Admins can change vendor status.",
         { status: 403 },
       );
     }
-
-    try {
-      const vendor = await prisma.vendor.update({
-        where: { id, companyId: context.companyId },
-        data: { isActive: false },
-      });
-
-      // Audit
-      await prisma.auditLog.create({
-        data: {
-          companyId: context.companyId,
-          userId: context.profileId,
-          action: "DEACTIVATE_VENDOR",
-          entity: "Vendor",
-          entityId: vendor.id,
-          metadata: { name: vendor.name },
-        },
-      });
-
-      return NextResponse.json(vendor);
-    } catch (error) {
-      console.error("[VENDOR_DEACTIVATE]", error);
-      // Check if record not found
-      return new NextResponse("Error deactivating vendor", { status: 500 });
-    }
   }
 
-  return new NextResponse("Invalid Action", { status: 400 });
+  try {
+    // Remove sensitive or Immutable fields if any (like id, companyId, createdAt)
+    // For now, we trust the body but ensure companyId is not changed by the update query query scope
+    const { id: _id, companyId: _cid, createdAt: _ca, ...updateData } = body;
+
+    const vendor = await prisma.vendor.update({
+      where: { id, companyId: context.companyId },
+      data: updateData,
+    });
+
+    // Audit
+    await prisma.auditLog.create({
+      data: {
+        companyId: context.companyId,
+        userId: context.profileId,
+        action: body.isActive === false ? "DEACTIVATE_VENDOR" : "UPDATE_VENDOR",
+        entity: "Vendor",
+        entityId: vendor.id,
+        metadata: { name: vendor.name, ...updateData },
+      },
+    });
+
+    return NextResponse.json(vendor);
+  } catch (error) {
+    console.error("[VENDOR_UPDATE]", error);
+    return new NextResponse("Error updating vendor", { status: 500 });
+  }
 }
