@@ -33,6 +33,16 @@ enum PRStatus {
   REJECTED
 }
 
+enum PRPriority {
+  NORMAL
+  URGENT
+}
+
+enum BudgetCategory {
+  CAPEX
+  OPEX
+}
+
 enum ApprovalStatus {
   PENDING
   APPROVED
@@ -195,6 +205,7 @@ model Vendor {
 
   purchaseOrders PurchaseOrder[]
   invoices       Invoice[]
+  purchaseRequests PurchaseRequest[]
 }
 
 ////////////////////
@@ -213,6 +224,15 @@ model PurchaseRequest {
   description   String?
   department    String
   estimatedCost Float
+  priority      PRPriority @default(NORMAL)
+  budgetCategory BudgetCategory?
+  requiredBy    DateTime?
+  attachments   String[]  @default([])
+
+  preferredVendorId String?
+  preferredVendor   Vendor? @relation(fields: [preferredVendorId], references: [id])
+  
+  rejectionReason   String?
 
   status PRStatus @default(DRAFT)
 

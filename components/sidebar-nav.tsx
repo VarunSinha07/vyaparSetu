@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Truck, Settings } from "lucide-react";
-import { cn } from "@/lib/utils"; // Assuming cn utility exists, otherwise standard template literals
+import {
+  LayoutDashboard,
+  Users,
+  Truck,
+  Settings,
+  FileText,
+} from "lucide-react";
+
 
 const navItems = [
   {
@@ -13,8 +19,14 @@ const navItems = [
     exact: true,
   },
   {
-    name: "Team Members",
-    href: "#", // Placeholder
+    name: "Purchase Requests",
+    href: "/dashboard/purchase-requests",
+    icon: FileText,
+    exact: false,
+  },
+  {
+    name: "Manage Team",
+    href: "/dashboard/team",
     icon: Users,
     exact: false,
   },
