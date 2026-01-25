@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   Building2, // Added explicit import if needed, or I will switch to Building which is imported
   Calendar,
+  Truck,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -18,9 +19,10 @@ export default async function DashboardPage() {
   if (!context) return null;
   let activeMembersCount = 0;
   let pendingInvitesCount = 0;
+  let vendorsCount = 0;
 
   if (context.companyId) {
-    const [members, invites] = await Promise.all([
+    const [members, invites, vendors] = await Promise.all([
       prisma.companyMember.count({
         where: {
           companyId: context.companyId,
@@ -33,9 +35,15 @@ export default async function DashboardPage() {
           acceptedAt: null,
         },
       }),
+      prisma.vendor.count({
+        where: {
+          companyId: context.companyId,
+        },
+      }),
     ]);
     activeMembersCount = members;
     pendingInvitesCount = invites;
+    vendorsCount = vendors;
   }
 
   const cards = [
@@ -58,11 +66,11 @@ export default async function DashboardPage() {
       textClass: "text-amber-600",
     },
     {
-      label: "Departments",
-      value: "4",
-      trend: "Stable",
+      label: "Total Vendors",
+      value: vendorsCount.toString(),
+      trend: "Active",
       trendUp: true,
-      icon: Building,
+      icon: Truck,
       bgClass: "bg-emerald-50",
       textClass: "text-emerald-600",
     },

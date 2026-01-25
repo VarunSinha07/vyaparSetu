@@ -1,14 +1,7 @@
 import { getContext } from "@/lib/context";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import {
-  Building2,
-  LayoutDashboard,
-  Settings,
-  Users,
-  ChevronRight,
-  Truck,
-} from "lucide-react";
+import { SidebarNav } from "@/components/sidebar-nav";
+import { Building2, ChevronRight } from "lucide-react";
 
 export default async function ProtectedLayout({
   children,
@@ -36,45 +29,7 @@ export default async function ProtectedLayout({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-          <div className="px-3 mb-2">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Main Menu
-            </p>
-          </div>
-
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-3 px-3 py-2.5 bg-indigo-50/80 text-indigo-700 rounded-xl text-sm font-medium group transition-all duration-200 border border-indigo-100 hover:shadow-sm"
-          >
-            <LayoutDashboard className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" />
-            Dashboard
-          </Link>
-
-          <Link
-            href="#"
-            className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl text-sm font-medium group transition-all duration-200"
-          >
-            <Users className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            Team Members
-          </Link>
-
-          <Link
-            href="/dashboard/vendors"
-            className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl text-sm font-medium group transition-all duration-200"
-          >
-            <Truck className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            Vendors
-          </Link>
-
-          <Link
-            href="#"
-            className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl text-sm font-medium group transition-all duration-200"
-          >
-            <Settings className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            Settings
-          </Link>
-        </nav>
+        <SidebarNav />
 
         {/* User Profile Footer */}
         <div className="p-4 border-t border-gray-100 bg-gray-50/30">

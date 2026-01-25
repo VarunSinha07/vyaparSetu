@@ -281,7 +281,7 @@ export default function VendorListView({ role }: { role: string | null }) {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {(canEdit || canDeactivate) && (
+                      {(canEdit || canToggleStatus) && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 active:scale-95">
