@@ -14,11 +14,12 @@ export async function GET(
 
   const { id } = await params;
 
-  // RBAC: View -> ADMIN, PROCUREMENT, FINANCE
+  // RBAC: View -> ADMIN, PROCUREMENT, FINANCE, MANAGER
   const allowedRoles: CompanyRole[] = [
     CompanyRole.ADMIN,
     CompanyRole.PROCUREMENT,
     CompanyRole.FINANCE,
+    CompanyRole.MANAGER,
   ];
   if (!context.role || !allowedRoles.includes(context.role as CompanyRole)) {
     return new NextResponse("Forbidden", { status: 403 });

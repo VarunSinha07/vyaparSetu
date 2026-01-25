@@ -37,11 +37,12 @@ export async function GET() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // RBAC: View vendors -> ADMIN, PROCUREMENT, FINANCE
+  // RBAC: View vendors -> ADMIN, PROCUREMENT, FINANCE, MANAGER
   const allowedRoles: CompanyRole[] = [
     CompanyRole.ADMIN,
     CompanyRole.PROCUREMENT,
     CompanyRole.FINANCE,
+    CompanyRole.MANAGER,
   ];
   if (!context.role || !allowedRoles.includes(context.role as CompanyRole)) {
     return new NextResponse("Forbidden", { status: 403 });
@@ -70,7 +71,10 @@ export async function POST(req: Request) {
   }
 
   // RBAC: Add vendor -> ADMIN, PROCUREMENT
-  const allowedRoles: CompanyRole[] = [CompanyRole.ADMIN, CompanyRole.PROCUREMENT];
+  const allowedRoles: CompanyRole[] = [
+    CompanyRole.ADMIN,
+    CompanyRole.PROCUREMENT,
+  ];
   if (!context.role || !allowedRoles.includes(context.role as CompanyRole)) {
     return new NextResponse("Forbidden", { status: 403 });
   }
@@ -85,25 +89,50 @@ export async function POST(req: Request) {
       });
     }
 
-    const { name, gstin } = validation.data;
+    const { name, gstin, pan, email, phone } = validation.data;
 
-    // Check for duplicates (Simple check: Name or GSTIN within company)
-    // NOTE: Companies might have same vendor names, so scope by companyId
+    // Enhanced Duplication Check
+    // We check for conflicts in Name, GSTIN, PAN, Email, or Phone within the same company
+    const conflicts: any[] = [];
+    if (gstin && gstin.trim() !== "") conflicts.push({ gstin });
+    if (pan && pan.trim() !== "") conflicts.push({ pan });
+    if (email && email.trim() !== "") conflicts.push({ email });
+    if (phone && phone.trim() !== "") conflicts.push({ phone });
+    // Always check name
+    conflicts.push({ name: { equals: name, mode: "insensitive" } });
+
     const existingVendor = await prisma.vendor.findFirst({
       where: {
         companyId: context.companyId,
-        OR: [
-          { name: { equals: name, mode: "insensitive" } },
-          ...(gstin ? [{ gstin }] : []),
-        ],
+        OR: conflicts,
       },
     });
 
     if (existingVendor) {
-      return new NextResponse(
-        "Vendor with this name or GSTIN already exists.",
-        { status: 409 },
-      );
+      if (existingVendor.gstin && gstin && existingVendor.gstin === gstin) {
+        return new NextResponse("A vendor with this GSTIN already exists.", {
+          status: 409,
+        });
+      }
+      if (existingVendor.pan && pan && existingVendor.pan === pan) {
+        return new NextResponse("A vendor with this PAN already exists.", {
+          status: 409,
+        });
+      }
+      if (existingVendor.email && email && existingVendor.email === email) {
+        return new NextResponse("A vendor with this Email already exists.", {
+          status: 409,
+        });
+      }
+      if (existingVendor.phone && phone && existingVendor.phone === phone) {
+        return new NextResponse(
+          "A vendor with this Phone number already exists.",
+          { status: 409 },
+        );
+      }
+      return new NextResponse("A vendor with this Name already exists.", {
+        status: 409,
+      });
     }
 
     const vendor = await prisma.vendor.create({
