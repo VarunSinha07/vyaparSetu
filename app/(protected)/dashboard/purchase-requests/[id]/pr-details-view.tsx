@@ -19,6 +19,16 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   PurchaseRequest,
   CompanyRole,
   Vendor,
@@ -50,6 +60,11 @@ export default function PRDetailsView({
   const router = useRouter();
   const [pr] = useState<PRWithRelations>(initialPr);
   const [loading, setLoading] = useState(false);
+  const [confirmState, setConfirmState] = useState<{
+    isOpen: boolean;
+    action: "submit" | "review" | "approve" | "reject" | null;
+  }>({ isOpen: false, action: null });
+  const [rejectReason, setRejectReason] = useState("");
 
   // Status Badge Helper
   const getStatusBadge = (status: string) => {
@@ -90,20 +105,28 @@ export default function PRDetailsView({
   };
 
   // Action Handlers
-  const handleAction = async (
-    action: "submit" | "review" | "approve" | "reject",
-  ) => {
-    if (!confirm(`Are you sure you want to ${action} this request?`)) return; // Simple confirm for now
+  const openConfirm = (action: "submit" | "review" | "approve" | "reject") => {
+    setConfirmState({ isOpen: true, action });
+    setRejectReason("");
+  };
+
+  const handleExecuteAction = async () => {
+    const action = confirmState.action;
+    if (!action) return;
 
     // For reject, prompt for reason
     let body = {};
     if (action === "reject") {
-      const reason = prompt("Please provide a rejection reason:");
-      if (!reason) return;
-      body = { reason };
+      if (!rejectReason) {
+        toast.error("Rejection reason is required");
+        return;
+      }
+      body = { reason: rejectReason };
     }
 
     setLoading(true);
+    setConfirmState({ ...confirmState, isOpen: false }); // Close early or wait?
+
     try {
       const res = await fetch(`/api/purchase-requests/${pr.id}/${action}`, {
         method: "POST",
@@ -123,6 +146,7 @@ export default function PRDetailsView({
       window.location.reload(); // Hard reload to ensure data freshness
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
+      setConfirmState({ isOpen: true, action }); // Re-open on error? Or just stay closed.
     } finally {
       setLoading(false);
     }
@@ -224,7 +248,7 @@ export default function PRDetailsView({
 
           {canSubmit && (
             <button
-              onClick={() => handleAction("submit")}
+              onClick={() => openConfirm("submit")}
               disabled={loading}
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition-all disabled:opacity-50"
             >
@@ -234,7 +258,7 @@ export default function PRDetailsView({
 
           {canReview && (
             <button
-              onClick={() => handleAction("review")}
+              onClick={() => openConfirm("review")}
               disabled={loading}
               className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-600 transition-all disabled:opacity-50"
             >
@@ -245,14 +269,14 @@ export default function PRDetailsView({
           {canDecide && (
             <>
               <button
-                onClick={() => handleAction("reject")}
+                onClick={() => openConfirm("reject")}
                 disabled={loading}
                 className="inline-flex items-center gap-2 bg-white border border-red-200 text-red-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-50 transition-all disabled:opacity-50"
               >
                 <XCircle className="w-4 h-4" /> Reject
               </button>
               <button
-                onClick={() => handleAction("approve")}
+                onClick={() => openConfirm("approve")}
                 disabled={loading}
                 className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-emerald-700 transition-all disabled:opacity-50"
               >
@@ -455,7 +479,7 @@ export default function PRDetailsView({
                     <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
                   </div>
                   <p className="text-sm text-gray-500 italic">
-                    Pending Decision...
+                    PENDING DECISION...
                   </p>
                 </div>
               )}
@@ -463,6 +487,66 @@ export default function PRDetailsView({
           </div>
         </div>
       </div>
+
+      <AlertDialog
+        open={confirmState.isOpen}
+        onOpenChange={(open) =>
+          setConfirmState((prev) => ({ ...prev, isOpen: open }))
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="capitalize">
+              {confirmState.action === "reject"
+                ? "Reject Purchase Request"
+                : `Confirm ${confirmState.action}`}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmState.action === "reject" ? (
+                <div className="space-y-3 pt-2">
+                  <p>
+                    Are you sure you want to reject this request? This action
+                    cannot be undone. Please provide a reason below.
+                  </p>
+                  <textarea
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    placeholder="Reason for rejection..."
+                    className="w-full min-h-[80px] p-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                `Are you sure you want to ${confirmState.action} this purchase request? This will move it to the next stage in the workflow.`
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault(); // Prevent auto-close
+                handleExecuteAction();
+              }}
+              disabled={
+                loading ||
+                (confirmState.action === "reject" && !rejectReason.trim())
+              }
+              className={
+                confirmState.action === "reject"
+                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                  : ""
+              }
+            >
+              {loading
+                ? "Processing..."
+                : confirmState.action === "reject"
+                  ? "Reject Request"
+                  : "Confirm"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

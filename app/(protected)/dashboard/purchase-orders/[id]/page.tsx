@@ -15,6 +15,16 @@ import {
   Mail,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type POStatus = "DRAFT" | "ISSUED" | "CANCELLED";
 
@@ -59,6 +69,7 @@ export default function PODetailsPage() {
 
   // Edit State
   const [isEditing, setIsEditing] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [editForm, setEditForm] = useState({
     paymentTerms: "",
     notes: "",
@@ -112,15 +123,13 @@ export default function PODetailsPage() {
     }
   };
 
-  const handleIssue = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to ISSUE this PO? This action cannot be undone.",
-      )
-    )
-      return;
+  const handleIssueClick = () => {
+    setIsConfirmOpen(true);
+  };
 
+  const handleIssueConfirm = async () => {
     setActionLoading(true);
+    setIsConfirmOpen(false);
     try {
       const res = await fetch(`/api/purchase-orders/${params.id}/issue`, {
         method: "POST",
@@ -205,7 +214,7 @@ export default function PODetailsPage() {
 
           {isDraft && (
             <button
-              onClick={handleIssue}
+              onClick={handleIssueClick}
               disabled={actionLoading}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
             >
@@ -402,6 +411,27 @@ export default function PODetailsPage() {
           </div>
         )}
       </div>
+
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Purchase Order Issue</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to ISSUE this purchase order? This action is
+              irreversible and will finalize the document for the vendor.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleIssueConfirm}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              Confirm Issue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

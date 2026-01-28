@@ -1,7 +1,8 @@
 import { getContext } from "@/lib/context";
 import { redirect } from "next/navigation";
 import { SidebarNav } from "@/components/sidebar-nav";
-import { Building2, ChevronRight } from "lucide-react";
+import { Building2 } from "lucide-react";
+import { SidebarUser } from "@/components/sidebar-user";
 
 export default async function ProtectedLayout({
   children,
@@ -32,24 +33,10 @@ export default async function ProtectedLayout({
         <SidebarNav />
 
         {/* User Profile Footer */}
-        <div className="p-4 border-t border-gray-100 bg-gray-50/30">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all duration-200 cursor-pointer border border-transparent hover:border-gray-200">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center ring-2 ring-white">
-              <span className="text-indigo-700 font-semibold text-sm">
-                {context.user.name?.[0]?.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-gray-900 truncate leading-snug">
-                {context.user.name}
-              </p>
-              <p className="text-xs text-gray-500 truncate capitalize">
-                {context.role?.toLowerCase()}
-              </p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-          </div>
-        </div>
+        <SidebarUser
+          name={context.user.name || "User"}
+          role={context.role || "Member"}
+        />
       </aside>
 
       {/* Main Content Area */}
