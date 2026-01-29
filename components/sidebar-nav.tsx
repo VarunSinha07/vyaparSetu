@@ -31,6 +31,12 @@ const navItems = [
     exact: false,
   },
   {
+    name: "Invoices",
+    href: "/dashboard/invoices",
+    icon: FileText,
+    exact: false,
+  },
+  {
     name: "Manage Team",
     href: "/dashboard/team",
     icon: Users,

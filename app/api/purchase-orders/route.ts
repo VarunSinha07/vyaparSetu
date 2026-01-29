@@ -103,20 +103,29 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET( ) {
+export async function GET(request: Request) {
   const context = await getContext();
   if (!context?.companyId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const statusParam = searchParams.get("status");
+
   // All roles can view
 
   try {
+    const filters: any = { companyId: context.companyId };
+    if (statusParam) {
+      filters.status = statusParam;
+    }
+
     const pos = await prisma.purchaseOrder.findMany({
-      where: { companyId: context.companyId },
+      where: filters,
       include: {
         vendor: { select: { name: true } },
         createdBy: { select: { name: true } },
+        invoice: { select: { id: true, status: true } }, // Include invoice info
       },
       orderBy: { createdAt: "desc" },
     });

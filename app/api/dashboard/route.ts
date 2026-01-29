@@ -111,7 +111,7 @@ export async function GET() {
       ] = await Promise.all([
         prisma.purchaseOrder.count({ where: { companyId, status: "ISSUED" } }),
         prisma.invoice.count({
-          where: { companyId, status: "PENDING_VERIFICATION" },
+          where: { companyId, status: "UNDER_VERIFICATION" },
         }),
         prisma.payment.count({ where: { companyId, status: "PENDING" } }),
       ]);

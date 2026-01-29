@@ -50,7 +50,8 @@ enum ApprovalStatus {
 }
 
 enum InvoiceStatus {
-  PENDING_VERIFICATION
+  UPLOADED
+  UNDER_VERIFICATION
   VERIFIED
   MISMATCH
   REJECTED
@@ -168,6 +169,8 @@ model UserProfile {
   approvals        Approval[]
   createdPurchaseOrders PurchaseOrder[] @relation("POCreator")
   issuedPurchaseOrders  PurchaseOrder[] @relation("POIssuer")
+  uploadedInvoices      Invoice[]       @relation("InvoiceUploader")
+  verifiedInvoices      Invoice[]       @relation("InvoiceVerifier")
 }
 
 model CompanyMember {
@@ -294,7 +297,7 @@ model PurchaseOrder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  invoices Invoice[]
+  invoice Invoice?
 }
 
 ////////////////////
@@ -306,14 +309,21 @@ model Invoice {
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
-  purchaseOrderId String
+  purchaseOrderId String        @unique
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
 
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id])
 
+  uploadedById String
+  uploadedBy   UserProfile @relation("InvoiceUploader", fields: [uploadedById], references: [id])
+
+  verifiedById String?
+  verifiedBy   UserProfile? @relation("InvoiceVerifier", fields: [verifiedById], references: [id])
+
   invoiceNumber String
   invoiceDate   DateTime
+  fileUrl       String
 
   subtotal    Float
   cgst        Float?
@@ -321,10 +331,13 @@ model Invoice {
   igst        Float?
   totalAmount Float
 
-  status InvoiceStatus @default(PENDING_VERIFICATION)
+  status InvoiceStatus @default(UPLOADED)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  comments String? // Reason for rejection or mismatch notes
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  verifiedAt DateTime?
 
   payments Payment[]
 }
