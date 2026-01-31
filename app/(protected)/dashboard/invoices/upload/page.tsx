@@ -8,6 +8,7 @@ interface PO {
   id: string;
   poNumber: string;
   vendor: { name: string };
+  vendorId: string;
   totalAmount: number;
   invoice?: { id: string };
 }
@@ -109,7 +110,7 @@ export default function UploadInvoicePage() {
           // It DOES NOT return `vendorId` field explicitly unless prisma default behavior includes scalars.
           // Prisma details: `findMany` returns all scalars of the model + included relations.
           // So `vendorId` IS available.
-          vendorId: (po as any).vendorId,
+          vendorId: po.vendorId,
           ...formData,
         }),
       });

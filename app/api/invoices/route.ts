@@ -135,7 +135,7 @@ export async function POST(request: Request) {
       data: {
         companyId,
         purchaseOrderId: validatedData.purchaseOrderId,
-        vendorId: validatedData.vendorId, // Should match PO vendor ideally?
+        vendorId: po.vendorId, // Use vendor from PO to ensure consistency
         uploadedById: profileId,
         invoiceNumber: validatedData.invoiceNumber,
         invoiceDate: validatedData.invoiceDate,
