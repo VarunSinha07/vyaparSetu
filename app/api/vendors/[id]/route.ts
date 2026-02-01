@@ -78,7 +78,8 @@ export async function PATCH(
   try {
     // Remove sensitive or Immutable fields if any (like id, companyId, createdAt)
     // For now, we trust the body but ensure companyId is not changed by the update query query scope
-    const { id: _id, companyId: _cid, createdAt: _ca, ...updateData } = body;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, companyId: _companyId, createdAt: _createdAt, ...updateData } = body;
 
     const vendor = await prisma.vendor.update({
       where: { id, companyId: context.companyId },

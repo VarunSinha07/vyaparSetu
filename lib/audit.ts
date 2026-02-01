@@ -13,7 +13,7 @@ export async function logAudit({
   action: string;
   entity: string;
   entityId: string;
-  metadata?: any;
+  metadata?: unknown;
 }) {
   try {
     await prisma.auditLog.create({

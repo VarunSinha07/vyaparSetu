@@ -15,7 +15,10 @@ export default async function EditVendorPage({
   // RBAC: Edit -> ADMIN, PROCUREMENT
   const allowedRoles = [CompanyRole.ADMIN, CompanyRole.PROCUREMENT];
 
-  if (!context?.role || !allowedRoles.includes(context.role as CompanyRole)) {
+  if (
+    !context?.role ||
+    !(allowedRoles as CompanyRole[]).includes(context.role as CompanyRole)
+  ) {
     redirect("/dashboard/vendors");
   }
 

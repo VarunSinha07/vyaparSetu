@@ -55,13 +55,13 @@ enum InvoiceStatus {
   VERIFIED
   MISMATCH
   REJECTED
+  PAID
 }
 
 enum PaymentStatus {
-  PENDING
-  PAID
+  INITIATED
+  SUCCESS
   FAILED
-  PARTIAL
 }
 
 enum POStatus {
@@ -171,6 +171,7 @@ model UserProfile {
   issuedPurchaseOrders  PurchaseOrder[] @relation("POIssuer")
   uploadedInvoices      Invoice[]       @relation("InvoiceUploader")
   verifiedInvoices      Invoice[]       @relation("InvoiceVerifier")
+  initiatedPayments     Payment[]
 }
 
 model CompanyMember {
@@ -350,8 +351,11 @@ model Payment {
   invoiceId String
   invoice   Invoice @relation(fields: [invoiceId], references: [id])
 
+  initiatedById String
+  initiatedBy   UserProfile @relation(fields: [initiatedById], references: [id])
+
   amount Float
-  status PaymentStatus @default(PENDING)
+  status PaymentStatus @default(INITIATED)
 
   razorpayOrderId   String?
   razorpayPaymentId String?

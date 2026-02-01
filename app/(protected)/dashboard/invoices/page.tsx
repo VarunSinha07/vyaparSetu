@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
 import { format } from "date-fns";
 import {
   Loader2,
   FileText,
-  User,
-  MoreHorizontal,
   Plus,
-  Filter,
 } from "lucide-react";
 
 interface Invoice {
@@ -25,46 +21,45 @@ interface Invoice {
 }
 
 export default function InvoicesPage() {
-  const { data: session } = authClient.useSession();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const res = await fetch("/api/user/role");
+        if (res.ok) {
+          const data = await res.json();
+          setUserRole(data.role);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    const fetchInvoices = async () => {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (filterStatus) params.append("status", filterStatus);
+
+      try {
+        const res = await fetch(`/api/invoices?${params.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setInvoices(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch invoices", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchInvoices();
     fetchRole();
   }, [filterStatus]);
-
-  const fetchRole = async () => {
-    try {
-      const res = await fetch("/api/user/role");
-      if (res.ok) {
-        const data = await res.json();
-        setUserRole(data.role);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const fetchInvoices = async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (filterStatus) params.append("status", filterStatus);
-
-    try {
-      const res = await fetch(`/api/invoices?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setInvoices(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch invoices", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const statusColors: Record<string, string> = {
     UPLOADED: "bg-yellow-100 text-yellow-800",

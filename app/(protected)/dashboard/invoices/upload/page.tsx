@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Upload, FileText, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 interface PO {
   id: string;
@@ -110,8 +110,8 @@ export default function UploadInvoicePage() {
           // It DOES NOT return `vendorId` field explicitly unless prisma default behavior includes scalars.
           // Prisma details: `findMany` returns all scalars of the model + included relations.
           // So `vendorId` IS available.
-          vendorId: po.vendorId,
           ...formData,
+          vendorId: po.vendorId,
         }),
       });
 
@@ -121,8 +121,9 @@ export default function UploadInvoicePage() {
       }
 
       router.push("/dashboard/invoices");
-    } catch (err: any) {
-      setError(err.message || "Failed to upload invoice");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      setError(message || "Failed to upload invoice");
     } finally {
       setSubmitting(false);
     }

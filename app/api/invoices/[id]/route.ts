@@ -31,6 +31,10 @@ export async function GET(
         verifiedBy: {
           select: { name: true },
         },
+        payments: {
+          where: { status: "SUCCESS" },
+          select: { paidAt: true, id: true, razorpayPaymentId: true },
+        },
       },
     });
 

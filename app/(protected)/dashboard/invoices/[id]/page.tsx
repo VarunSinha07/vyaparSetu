@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "next/navigation";
 import {
   Loader2,
   FileText,
-  CheckCircle,
   AlertTriangle,
-  XCircle,
   Building2,
-  Calendar,
   ExternalLink,
   ArrowLeft,
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import Script from "next/script";
 
 interface DetailInvoice {
   id: string;
@@ -44,12 +41,14 @@ interface DetailInvoice {
   };
   uploadedBy: { name: string };
   verifiedBy?: { name: string };
+  payments: {
+    paidAt: string;
+    razorpayPaymentId: string;
+  }[];
 }
 
 export default function InvoiceDetailPage() {
   const { id } = useParams();
-  const router = useRouter();
-  const { data: session } = authClient.useSession();
   const [invoice, setInvoice] = useState<DetailInvoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -60,12 +59,7 @@ export default function InvoiceDetailPage() {
   const [showMismatchInput, setShowMismatchInput] = useState(false);
   const [reason, setReason] = useState("");
 
-  useEffect(() => {
-    if (id) fetchInvoice();
-    fetchRole();
-  }, [id]);
-
-  const fetchRole = async () => {
+  const fetchRole = useCallback(async () => {
     try {
       const res = await fetch("/api/user/role");
       if (res.ok) {
@@ -75,9 +69,9 @@ export default function InvoiceDetailPage() {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, []);
 
-  const fetchInvoice = async () => {
+  const fetchInvoice = useCallback(async () => {
     try {
       const res = await fetch(`/api/invoices/${id}`);
       if (res.ok) {
@@ -89,7 +83,12 @@ export default function InvoiceDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) fetchInvoice();
+    fetchRole();
+  }, [id, fetchInvoice, fetchRole]);
 
   const handleAction = async (action: "verify" | "mismatch" | "reject") => {
     if ((action === "mismatch" || action === "reject") && !reason) {
@@ -119,8 +118,79 @@ export default function InvoiceDetailPage() {
       setShowMismatchInput(false);
       setReason("");
       fetchInvoice();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : String(err));
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handlePayment = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: id }),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: data.currency,
+        name: "VyaparFlow",
+        description: `Payment for Invoice #${invoice?.invoiceNumber}`,
+        order_id: data.orderId,
+        handler: async function (response: {
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) {
+          try {
+            const verifyRes = await fetch("/api/payments/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderCreationId: data.orderId,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              }),
+            });
+
+            if (!verifyRes.ok) throw new Error("Verification failed");
+
+            alert("Payment Successful and Verified!");
+            fetchInvoice();
+          } catch (err) {
+            console.error(err);
+            alert(
+              "Payment successful but verification failed. Please contact support.",
+            );
+          }
+        },
+        prefill: {
+          name: "VyaparFlow Finance",
+          email: "finance@vyaparflow.com",
+        },
+        theme: {
+          color: "#4f46e5",
+        },
+      };
+
+      const rzp1 = new (
+        window as unknown as {
+          Razorpay: new (arg: unknown) => { open: () => void };
+        }
+      ).Razorpay(options);
+      rzp1.open();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Payment initiation failed");
     } finally {
       setActionLoading(false);
     }
@@ -140,8 +210,19 @@ export default function InvoiceDetailPage() {
     userRole === "FINANCE" &&
     (invoice.status === "UPLOADED" || invoice.status === "UNDER_VERIFICATION");
 
+  const canPay =
+    userRole === "FINANCE" &&
+    invoice.status === "VERIFIED" &&
+    invoice.payments.length === 0;
+
+  const isPaid = invoice.status === "PAID" || invoice.payments.length > 0;
+
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+      <Script
+        id="razorpay-checkout-js"
+        src="https://checkout.razorpay.com/v1/checkout.js"
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -152,58 +233,87 @@ export default function InvoiceDetailPage() {
             <ArrowLeft className="w-5 h-5 text-gray-500" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              Invoice #{invoice.invoiceNumber}
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">
+                Invoice #{invoice.invoiceNumber}
+              </h1>
               <span
                 className={`text-sm px-3 py-1 rounded-full border ${
-                  invoice.status === "VERIFIED"
-                    ? "bg-green-50 text-green-700 border-green-200"
-                    : invoice.status === "REJECTED"
-                      ? "bg-red-50 text-red-700 border-red-200"
-                      : invoice.status === "MISMATCH"
-                        ? "bg-orange-50 text-orange-700 border-orange-200"
-                        : "bg-blue-50 text-blue-700 border-blue-200"
+                  invoice.status === "PAID"
+                    ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                    : invoice.status === "VERIFIED"
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : invoice.status === "REJECTED"
+                        ? "bg-red-50 text-red-700 border-red-200"
+                        : invoice.status === "MISMATCH"
+                          ? "bg-orange-50 text-orange-700 border-orange-200"
+                          : "bg-blue-50 text-blue-700 border-blue-200"
                 }`}
               >
                 {invoice.status.replace("_", " ")}
               </span>
-            </h1>
+            </div>
             <p className="text-sm text-gray-500 mt-1">
               Uploaded on {format(new Date(invoice.invoiceDate), "MMM d, yyyy")}{" "}
               by {invoice.uploadedBy.name}
             </p>
           </div>
         </div>
-        {canVerify && (
-          <div className="flex gap-3">
+        <div className="flex gap-3">
+          {canVerify && (
+            <>
+              <button
+                onClick={() => {
+                  setShowMismatchInput(true);
+                  setShowRejectInput(false);
+                }}
+                className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 font-medium rounded-lg hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+              >
+                Mark Mismatch
+              </button>
+              <button
+                onClick={() => {
+                  setShowRejectInput(true);
+                  setShowMismatchInput(false);
+                }}
+                className="px-4 py-2 bg-white border border-red-200 text-red-700 font-medium rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => handleAction("verify")}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex items-center gap-2"
+              >
+                {actionLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                Verify Invoice
+              </button>
+            </>
+          )}
+
+          {canPay && (
             <button
-              onClick={() => {
-                setShowMismatchInput(true);
-                setShowRejectInput(false);
-              }}
-              className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 font-medium rounded-lg hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-            >
-              Mark Mismatch
-            </button>
-            <button
-              onClick={() => {
-                setShowRejectInput(true);
-                setShowMismatchInput(false);
-              }}
-              className="px-4 py-2 bg-white border border-red-200 text-red-700 font-medium rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              Reject
-            </button>
-            <button
-              onClick={() => handleAction("verify")}
+              onClick={handlePayment}
               disabled={actionLoading}
-              className="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex items-center gap-2"
+              className="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center gap-2 shadow-lg shadow-indigo-200"
             >
               {actionLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Verify Invoice
+              Pay Now
             </button>
-          </div>
-        )}
+          )}
+
+          {isPaid && invoice.payments[0] && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-700">
+              <span className="w-2 h-2 rounded-full bg-indigo-600" />
+              <span className="text-sm font-medium">
+                Paid on{" "}
+                {invoice.payments[0].paidAt
+                  ? format(new Date(invoice.payments[0].paidAt), "dd MMM yyyy")
+                  : "N/A"}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Action Inputs */}

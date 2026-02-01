@@ -93,7 +93,7 @@ export async function POST(req: Request) {
 
     // Enhanced Duplication Check
     // We check for conflicts in Name, GSTIN, PAN, Email, or Phone within the same company
-    const conflicts: any[] = [];
+    const conflicts: Record<string, unknown>[] = [];
     if (gstin && gstin.trim() !== "") conflicts.push({ gstin });
     if (pan && pan.trim() !== "") conflicts.push({ pan });
     if (email && email.trim() !== "") conflicts.push({ email });

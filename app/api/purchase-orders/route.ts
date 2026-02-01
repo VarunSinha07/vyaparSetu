@@ -1,6 +1,6 @@
 import { getContext } from "@/lib/context";
 import prisma from "@/lib/prisma";
-import { CompanyRole, PRStatus, POStatus } from "@/app/generated/prisma/client";
+import { CompanyRole, PRStatus, POStatus, Prisma } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { format } from "date-fns";
@@ -115,9 +115,9 @@ export async function GET(request: Request) {
   // All roles can view
 
   try {
-    const filters: any = { companyId: context.companyId };
+    const filters: Prisma.PurchaseOrderWhereInput = { companyId: context.companyId };
     if (statusParam) {
-      filters.status = statusParam;
+      filters.status = statusParam as POStatus;
     }
 
     const pos = await prisma.purchaseOrder.findMany({

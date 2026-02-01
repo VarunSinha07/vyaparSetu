@@ -16,17 +16,19 @@ const transporter = nodemailer.createTransport(transportOptions);
 
 export async function sendEmail({
   to,
+  cc,
   subject,
   text,
   html,
 }: {
   to: string;
+  cc?: string | string[];
   subject: string;
   text: string;
   html?: string;
 }) {
   if (!process.env.EMAIL_SERVER_HOST) {
-    console.log("[EMAIL MOCK]", { to, subject, text });
+    console.log("[EMAIL MOCK]", { to, cc, subject, text });
     return;
   }
 
@@ -34,6 +36,7 @@ export async function sendEmail({
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || '"VyaparFlow" <noreply@vyaparflow.com>',
       to,
+      cc,
       subject,
       text,
       html,
