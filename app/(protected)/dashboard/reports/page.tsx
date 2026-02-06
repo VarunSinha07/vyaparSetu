@@ -1,17 +1,14 @@
 import { getContext } from "@/lib/context";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
-import { format, differenceInDays } from "date-fns";
+import  prisma  from "@/lib/prisma";
 import {
-  BarChart3,
-  PieChart,
-  AlertCircle,
-  Wallet,
-  FileText,
-  CheckCircle2,
-  XCircle,
-  Clock,
-} from "lucide-react";
+  VendorSpendChart,
+  ProcurementStatusChart,
+  MonthlySpendChart,
+  AgingChart,
+} from "./report-charts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { format, subMonths, differenceInDays } from "date-fns";
 
 export default async function ReportsPage() {
   const context = await getContext();
@@ -20,298 +17,200 @@ export default async function ReportsPage() {
   const { role, companyId } = context;
   if (!companyId) redirect("/sign-in");
 
-  const isProcurement = role === "PROCUREMENT";
+  // RBAC
+  const isFinancialUser = role === "ADMIN" || role === "FINANCE"; // Updated to match schema enum if needed, or use string "FINANCE"
 
-  // Data Fetching
-  const [prStats, vendorSpend, agingInvoices] = await Promise.all([
-    // 1. Procurement Stats (For everyone)
-    prisma.purchaseRequest.groupBy({
-      by: ["status"],
-      where: { companyId },
-      _count: true,
-    }),
+  // 1. Vendor Spend (Top 10) - invoices
+  // Only for finance users
+  let vendorSpendData: { name: string; amount: number }[] = [];
+  if (isFinancialUser) {
+    const invoices = await prisma.invoice.findMany({
+      where: {
+        companyId,
+        status: { not: "REJECTED" },
+      },
+      include: {
+        vendor: {
+          select: { name: true },
+        },
+      },
+    });
 
-    // 2. Vendor Spend (Admin/Finance only)
-    !isProcurement
-      ? prisma.payment.findMany({
-          where: { companyId, status: "SUCCESS" },
-          include: {
-            invoice: {
-              include: { vendor: true },
-            },
-          },
-        })
-      : Promise.resolve([]),
+    const vendorSpendMap = new Map<string, number>();
+    invoices.forEach((inv) => {
+      const vendorName = inv.vendor?.name || "Unknown";
+      const current = vendorSpendMap.get(vendorName) || 0;
+      vendorSpendMap.set(vendorName, current + inv.totalAmount);
+    });
 
-    // 3. Aging Invoices (Verified but not Paid) (Admin/Finance only)
-    !isProcurement
-      ? prisma.invoice.findMany({
-          where: {
-            companyId,
-            status: "VERIFIED",
-            // Logic: Verified means it's ready for payment.
-            // We want to see how long it's been sitting.
-            // Prisma doesn't do "NOT EXISTS Payment" easily in simple query without relation filtering
-            // But usually Verified -> Paid transition handles status.
-            // So just finding VERIFIED invoices is enough for "Pending Payment"
-          },
-          include: { vendor: true },
-          orderBy: { invoiceDate: "asc" },
-        })
-      : Promise.resolve([]),
-  ]);
+    vendorSpendData = Array.from(vendorSpendMap.entries())
+      .map(([name, amount]) => ({ name, amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 10);
+  }
 
-  // Process Vendor Spend Data
-  const spendByVendor: Record<
-    string,
-    { name: string; amount: number; count: number }
-  > = {};
-  vendorSpend.forEach((p) => {
-    const vName = p.invoice.vendor.name;
-    if (!spendByVendor[vName]) {
-      spendByVendor[vName] = { name: vName, amount: 0, count: 0 };
+  // 2. PR Status Distribution (Everyone)
+  const prStats = await prisma.purchaseRequest.groupBy({
+    by: ["status"],
+    where: { companyId },
+    _count: {
+        _all: true
     }
-    spendByVendor[vName].amount += p.amount;
-    spendByVendor[vName].count += 1;
   });
 
-  const topVendors = Object.values(spendByVendor)
-    .sort((a, b) => b.amount - a.amount)
-    .slice(0, 5); // Top 5
+  const prStatusData = prStats.map((stat) => ({
+    name: stat.status,
+    value: stat._count._all,
+  }));
 
-  // Process PR Stats
-  const prCounts = {
-    TOTAL: 0,
-    APPROVED: 0,
-    PENDING: 0,
-    REJECTED: 0,
-    DRAFT: 0,
-  };
+  // 3. Monthly Spend Trend (Last 12 Months)
+  // Only for finance users
+  let monthlySpendData: { month: string; amount: number }[] = [];
+  if (isFinancialUser) {
+    const startDate = subMonths(new Date(), 11);
+    const payments = await prisma.payment.findMany({
+      where: {
+        companyId,
+        createdAt: {
+          gte: startDate,
+        },
+        status: "SUCCESS", // Only count successful payments
+      },
+      select: {
+        amount: true,
+        createdAt: true,
+      },
+    });
 
-  prStats.forEach((stat) => {
-    // @ts-expect-error: Dynamic property assignment based on status string
-    prCounts[stat.status] = stat._count;
-    prCounts.TOTAL += stat._count;
-  });
-  // Map "SUBMITTED" and "UNDER_REVIEW" to PENDING for simpler report
+    const monthlySpendMap = new Map<string, number>();
+    // Initialize last 12 months with 0
+    for (let i = 11; i >= 0; i--) {
+      const d = subMonths(new Date(), i);
+      const key = format(d, "MMM yyyy");
+      monthlySpendMap.set(key, 0);
+    }
 
-  // Custom type safe mapping if needed, simplified here
+    payments.forEach((p) => {
+      const key = format(p.createdAt, "MMM yyyy");
+      if (monthlySpendMap.has(key)) {
+        monthlySpendMap.set(key, (monthlySpendMap.get(key) || 0) + p.amount);
+      }
+    });
+
+    monthlySpendData = Array.from(monthlySpendMap.entries()).map(([month, amount]) => ({
+      month,
+      amount,
+    }));
+  }
+
+  // 4. Invoice Aging Report (Unpaid invoices)
+  // Only for finance users
+  let agingData: { bucket: string; value: number }[] = [];
+  if (isFinancialUser) {
+    const unpaidInvoices = await prisma.invoice.findMany({
+      where: {
+        companyId,
+        status: { 
+            in: ["VERIFIED", "UPLOADED", "UNDER_VERIFICATION", "MISMATCH"] // All non-paid, non-rejected statuses
+        }, 
+      },
+      select: {
+        invoiceDate: true,
+        createdAt: true,
+      },
+    });
+
+    const agingBuckets = { "0-15": 0, "16-30": 0, "31-60": 0, "60+": 0 };
+    const today = new Date();
+
+    unpaidInvoices.forEach((inv) => {
+      const targetDate = inv.invoiceDate || inv.createdAt;
+      const diff = differenceInDays(today, targetDate);
+
+      // We are looking for days OVERDUE, or just age?
+      // Typically Aging is "Days Outstanding". 
+      // If diff is negative (due date in future), it's 0.
+      const daysOutstanding = diff > 0 ? diff : 0; 
+
+      if (daysOutstanding <= 15) agingBuckets["0-15"]++;
+      else if (daysOutstanding <= 30) agingBuckets["16-30"]++;
+      else if (daysOutstanding <= 60) agingBuckets["31-60"]++;
+      else agingBuckets["60+"]++;
+    });
+
+    agingData = Object.entries(agingBuckets).map(([bucket, value]) => ({
+      bucket,
+      value,
+    }));
+  }
 
   return (
-    <div className="max-w-6xl mx-auto pb-12">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8 pt-4">
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Statistical Reports
-          </h1>
-          <p className="text-gray-500">
-            Insights into your procurement and financial health.
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Reports & Analytics</h1>
+          <p className="text-slate-500 mt-2 text-lg">
+            Real-time business intelligence for {role === 'ADMIN' ? 'management' : (role || 'User').toLowerCase().replace('_', ' ')}.
           </p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1 bg-white border border-gray-200 rounded-lg text-gray-600 text-sm shadow-sm">
-          <BarChart3 className="w-4 h-4" />
-          <span>{format(new Date(), "MMM yyyy")}</span>
         </div>
       </div>
 
-      <div className="space-y-8">
-        {/* REPORT 1: PROCUREMENT EFFICIENCY (Everyone) */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <PieChart className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg font-bold text-gray-800">
-              Procurement Efficiency
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card
-              label="Total Requests"
-              value={prCounts.TOTAL}
-              icon={<FileText className="text-gray-600" />}
-            />
-            <Card
-              label="Approved"
-              value={prCounts.APPROVED}
-              subtext={`${((prCounts.APPROVED / (prCounts.TOTAL || 1)) * 100).toFixed(0)}% Rate`}
-              icon={<CheckCircle2 className="text-emerald-600" />}
-              trend="positive"
-            />
-            <Card
-              label="Pending Review"
-              value={prCounts.PENDING} // Note: This might be 0 if we didn't map SUBMITTED etc.
-              // In real app, we would map specific enums.
-              // Assuming direct match for now or handled in render.
-              icon={<Clock className="text-amber-600" />}
-            />
-            <Card
-              label="Rejected"
-              value={prCounts.REJECTED}
-              icon={<XCircle className="text-red-600" />}
-            />
-          </div>
-        </section>
-
-        {/* REPORT 2: FINANCIAL INSIGHTS (Admin/Finance Only) */}
-        {!isProcurement ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Vendor Spend */}
-            <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <Wallet className="w-5 h-5 text-indigo-600" />
-                  <h3 className="font-bold text-gray-800">
-                    Top Vendors by Spend
-                  </h3>
-                </div>
-                <span className="text-xs font-semibold uppercase text-gray-400 tracking-wider">
-                  Lifetime
-                </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Monthly Spend Trend - Visible to Admin/Finance */}
+        {isFinancialUser && (
+          <Card className="col-span-1 md:col-span-2 shadow-sm border border-slate-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold text-slate-800">Monthly Spend Trend</CardTitle>
+              <CardDescription>Total outgoing successful payments over the last 12 months</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="pt-4 h-[350px]">
+                <MonthlySpendChart data={monthlySpendData} />
               </div>
+            </CardContent>
+          </Card>
+        )}
 
-              <div className="space-y-4">
-                {topVendors.length === 0 ? (
-                  <p className="text-center text-gray-400 py-8">
-                    No payment data available.
-                  </p>
-                ) : (
-                  topVendors.map((v, i) => (
-                    <div
-                      key={v.name}
-                      className="flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
-                          {i + 1}
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
-                            {v.name}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {v.count} Invoices
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-sm font-bold text-gray-900">
-                        Rs. {v.amount.toLocaleString("en-IN")}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </section>
+        {/* PR Status - Visible to Everyone */}
+        <Card className="shadow-sm border border-slate-200 flex flex-col">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xl font-semibold text-slate-800">Procurement Request Status</CardTitle>
+            <CardDescription>Distribution of purchase requests by status</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 min-h-[300px] flex flex-col justify-center">
+             <ProcurementStatusChart data={prStatusData} />
+          </CardContent>
+        </Card>
 
-            {/* Payment Aging */}
-            <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-orange-600" />
-                  <h3 className="font-bold text-gray-800">
-                    Pending Payments (Aging)
-                  </h3>
-                </div>
-                <span className="text-xs font-semibold uppercase text-gray-400 tracking-wider">
-                  Verified & Unpaid
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {agingInvoices.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-100 mb-2" />
-                    <p className="text-sm text-gray-500">
-                      All verified invoices are paid!
-                    </p>
-                  </div>
-                ) : (
-                  agingInvoices.slice(0, 5).map((inv) => {
-                    const days = differenceInDays(
-                      new Date(),
-                      new Date(inv.invoiceDate),
-                    );
-                    return (
-                      <div
-                        key={inv.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-orange-50/50 border border-orange-100"
-                      >
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {inv.vendor.name}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Inv #{inv.invoiceNumber} •{" "}
-                            {format(new Date(inv.invoiceDate), "MMM dd")}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-orange-700">
-                            Rs. {inv.totalAmount.toLocaleString("en-IN")}
-                          </div>
-                          <div className="text-xs font-medium text-orange-600">
-                            {days} days old
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-                {agingInvoices.length > 5 && (
-                  <div className="text-center pt-2">
-                    <span className="text-xs text-gray-500">
-                      And {agingInvoices.length - 5} more...
-                    </span>
-                  </div>
-                )}
-              </div>
-            </section>
-          </div>
+        {/* Vendor Spend - Visible to Admin/Finance */}
+        {isFinancialUser ? (
+          <Card className="shadow-sm border border-slate-200 flex flex-col">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold text-slate-800">Top Vendor Spend</CardTitle>
+              <CardDescription>Top 10 vendors by invoice volume</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 min-h-[300px]">
+              <VendorSpendChart data={vendorSpendData} />
+            </CardContent>
+          </Card>
         ) : (
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
-            <h3 className="text-blue-800 font-medium">
-              Financial Reports Hidden
-            </h3>
-            <p className="text-blue-600 text-sm mt-1">
-              Your role (Procurement) only has access to operational reports.
-            </p>
-          </div>
+             <Card className="shadow-sm border border-slate-200 border-dashed bg-slate-50 flex items-center justify-center p-8">
+                <p className="text-slate-400">Restricted Access</p>
+             </Card>
         )}
-      </div>
-    </div>
-  );
-}
 
-function Card({
-  label,
-  value,
-  subtext,
-  icon,
-  trend,
-}: {
-  label: string;
-  value: number | string;
-  subtext?: string;
-  icon: React.ReactNode;
-  trend?: string;
-}) {
-  return (
-    <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-start justify-between">
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-          {label}
-        </p>
-        <div className="text-2xl font-bold text-gray-900">{value}</div>
-        {subtext && (
-          <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
-            {subtext}
-          </p>
+        {/* Payment Aging - Visible to Admin/Finance */}
+        {isFinancialUser && (
+          <Card className="col-span-1 md:col-span-2 lg:col-span-1 shadow-sm border border-slate-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold text-slate-800">Invoice Aging Analysis</CardTitle>
+              <CardDescription>Unpaid invoices categorized by days outstanding</CardDescription>
+            </CardHeader>
+            <CardContent className="min-h-[300px]">
+              <AgingChart data={agingData} />
+            </CardContent>
+          </Card>
         )}
-      </div>
-      <div
-        className={`p-2 rounded-lg ${trend === "positive" ? "bg-emerald-50" : "bg-gray-50"}`}
-      >
-        {icon}
       </div>
     </div>
   );
