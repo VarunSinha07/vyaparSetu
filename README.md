@@ -1,36 +1,278 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+VyaparFlow
 
-## Getting Started
+A Multi-Tenant Vendor & Procurement Management Platform for Indian MSMEs
 
-First, run the development server:
+VyaparFlow is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparFlow aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Problem Statement
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+In typical Indian MSMEs:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Purchase requests are raised informally
 
-## Learn More
+Approvals happen over WhatsApp or email
 
-To learn more about Next.js, take a look at the following resources:
+Vendor details are stored in spreadsheets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Invoice verification is manual
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Payments are tracked separately from approvals
 
-## Deploy on Vercel
+These practices often result in delays, payment disputes, GST compliance risks, and lack of accountability.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+VyaparFlow addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+What VyaparFlow Does
+
+VyaparFlow digitizes the complete procurement lifecycle in one platform:
+
+Purchase Request → Approval → Purchase Order → Invoice → Payment
+
+
+Each step is company-scoped, role-based, and auditable, ensuring clarity and control throughout the process.
+
+
+User Roles
+
+Each company using VyaparFlow has internal users with defined roles:
+
+Admin – Company owner or system administrator
+
+Procurement – Raises purchase requests and manages vendors
+
+Manager – Reviews and approves purchase requests
+
+Finance – Verifies invoices and initiates vendor payments
+
+Vendors do not log in to the system. They are managed as external entities, which keeps the workflow simple and aligned with real-world practices.
+
+
+
+High-Level System Architecture
+
+Frontend: Web-based dashboard for internal users
+
+Backend: REST APIs handling business logic and RBAC
+
+Database: Centralized relational database with strict tenant isolation
+
+External services:
+
+Razorpay for payments
+
+Email service for user invitations and notifications
+
+Each company’s data is isolated using a companyId, ensuring multi-tenant safety.
+
+Authentication and Security
+
+Authentication is handled using Better Auth
+
+Authorization is enforced at the API level using role-based access control
+
+Each user belongs to exactly one company
+
+Every database query is scoped to the user’s company
+
+Payment status is confirmed only via Razorpay webhooks, not frontend callbacks
+
+
+
+
+
+Core Modules
+Company and User Management
+
+Users sign up and create a company workspace
+
+Admins invite employees via email
+
+Roles determine what actions each user can perform
+
+Vendor Management
+
+Companies can add and manage external vendors
+
+Vendor details include GSTIN, PAN, and bank information
+
+Only authorized roles can add or edit vendors
+
+Purchase Requests (PR)
+
+Raised by Procurement or Admin users
+
+Includes purchase justification, department, estimated amount, and priority
+
+
+
+PR lifecycle:
+
+DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED / REJECTED
+
+
+
+Approval Workflow
+
+Single-level approval by Manager or Admin
+
+Approval or rejection includes comments
+
+All actions are recorded for audit purposes
+
+Purchase Orders (PO)
+
+Created only after a PR is approved
+
+One PO per PR
+
+
+
+PO lifecycle:
+
+DRAFT → ISSUED → CANCELLED
+
+
+Issued POs are locked and cannot be edited
+
+Invoice Upload and Verification
+
+Invoices are uploaded against issued POs
+
+Invoice numbers are entered exactly as provided by vendors
+
+Finance verifies invoice amounts and GST breakup
+
+
+
+Invoice lifecycle:
+
+UPLOADED → VERIFIED / REJECTED / MISMATCH
+
+Vendor Payments
+
+Only Finance users can initiate payments
+
+Payments are made using Razorpay
+
+Razorpay webhooks are used as the source of truth
+
+Invoices are marked as PAID only after webhook confirmation
+
+Dashboard and Reports
+
+Dashboard overview is role-aware
+
+Managers see approval-related metrics
+
+Procurement sees execution status
+
+Finance sees payment readiness
+
+Admins get overall visibility
+
+Reports include vendor-wise spend and payment aging
+
+Audit Logs
+
+
+
+
+Tracks all important actions such as:
+
+PR approvals
+
+PO issuance
+
+Invoice verification
+
+Payments
+
+Audit logs are read-only and accessible to Admins
+
+End-to-End Workflow
+Create Company
+→ Invite Users
+→ Add Vendor
+→ Create Purchase Request
+→ Approve Request
+→ Create Purchase Order
+→ Upload Invoice
+→ Verify Invoice
+→ Pay Vendor
+
+
+
+Tech Stack
+
+Frontend
+
+Next.js
+Tailwind CSS
+
+
+Backend
+
+Node.js / Express
+Prisma ORM
+
+Database
+PostgreSQL
+
+Authentication
+Better Auth
+
+Payments
+Razorpay (Checkout and Webhooks)
+
+Email
+Nodemailer
+
+
+Key Design Decisions
+
+Vendors do not log in to keep workflows simple
+
+Invoice numbers are vendor-provided for GST and audit compliance
+
+Payments are confirmed only via Razorpay webhooks
+
+Single-level approval reflects Indian MSME reality
+
+Strict tenant isolation prevents cross-company data access
+
+Future Enhancements
+
+Vendor read-only dashboard
+
+Multi-level approval workflows
+
+Invoice OCR
+
+Inventory tracking
+
+Accounting software integrations
+
+Why This Project Matters
+
+VyaparFlow is not just a CRUD application. It demonstrates:
+
+Real-world problem solving
+
+End-to-end system design
+
+Secure payment handling
+
+Role-based workflows
+
+Audit and compliance awareness
+
+
+
+Author
+
+Varun Sinha
+Full Stack Developer

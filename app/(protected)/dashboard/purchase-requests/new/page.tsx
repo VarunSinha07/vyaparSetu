@@ -11,6 +11,7 @@ import {
   Send,
   Building2,
   FileText,
+  Calendar,
 } from "lucide-react";
 import { Vendor } from "@/app/generated/prisma/client";
 
@@ -306,14 +307,20 @@ export default function NewPurchaseRequestPage() {
                 <label className="text-sm font-medium text-gray-700">
                   Required By Date
                 </label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                  value={formData.requiredBy}
-                  onChange={(e) =>
-                    setFormData({ ...formData, requiredBy: e.target.value })
-                  }
-                />
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Calendar className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                  </div>
+                  <input
+                    type="date"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-gray-600 font-medium cursor-pointer relative z-10"
+                    value={formData.requiredBy}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, requiredBy: e.target.value })
+                    }
+                  />
+                </div>
               </div>
 
               {selectedVendor && (

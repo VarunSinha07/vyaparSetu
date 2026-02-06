@@ -20,15 +20,27 @@ export async function sendEmail({
   subject,
   text,
   html,
+  attachments,
 }: {
   to: string;
   cc?: string | string[];
   subject: string;
   text: string;
   html?: string;
+  attachments?: Array<{
+    filename: string;
+    content: Buffer | string;
+    contentType?: string;
+  }>;
 }) {
   if (!process.env.EMAIL_SERVER_HOST) {
-    console.log("[EMAIL MOCK]", { to, cc, subject, text });
+    console.log("[EMAIL MOCK]", {
+      to,
+      cc,
+      subject,
+      text,
+      hasAttachments: !!attachments,
+    });
     return;
   }
 
@@ -40,6 +52,7 @@ export async function sendEmail({
       subject,
       text,
       html,
+      attachments,
     });
     console.log("Message sent: %s", info.messageId);
     return info;

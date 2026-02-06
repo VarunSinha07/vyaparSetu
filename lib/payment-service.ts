@@ -6,6 +6,8 @@ import {
 } from "@/app/generated/prisma/client";
 import { logAudit } from "@/lib/audit";
 import { sendEmail } from "@/lib/email";
+import { generateReceiptPDF } from "@/lib/receipt-generator";
+import { generatePaymentSuccessEmail } from "@/lib/email-templates";
 
 export async function processPaymentSuccess(
   orderId: string,
@@ -91,17 +93,41 @@ export async function processPaymentSuccess(
         .map((u) => u.email)
         .filter((e): e is string => !!e);
 
+      // Generate Receipt PDF
+      const pdfBuffer = await generateReceiptPDF({
+        paymentId: paymentId,
+        paymentDate: new Date(),
+        invoiceNumber: fullPayment.invoice.invoiceNumber,
+        amount: fullPayment.amount,
+        vendorName: fullPayment.invoice.vendor.name,
+        vendorEmail: fullPayment.invoice.vendor.email,
+        vendorGst: fullPayment.invoice.vendor.gstin || undefined,
+      });
+
+      // Generate HTML Email
+      const emailHtml = generatePaymentSuccessEmail({
+        vendorName: fullPayment.invoice.vendor.name,
+        amount: fullPayment.amount,
+        invoiceNumber: fullPayment.invoice.invoiceNumber,
+        paymentDate: new Date().toLocaleDateString(),
+        transactionId: paymentId,
+      });
+
       await sendEmail({
         to: fullPayment.invoice.vendor.email,
         cc: ccEmails,
         subject: `Payment Receipt: Invoice #${fullPayment.invoice.invoiceNumber}`,
-        text:
-          `Dear ${fullPayment.invoice.vendor.name},\n\n` +
-          `We have successfully processed a payment of ₹${fullPayment.amount.toLocaleString()} for Invoice #${fullPayment.invoice.invoiceNumber}.\n` +
-          `Transaction ID: ${paymentId}\n` +
-          `Date: ${new Date().toLocaleDateString()}\n\n` +
-          `Thank you,\nVyaparFlow Finance Team`,
+        text: `Payment Successful for Invoice #${fullPayment.invoice.invoiceNumber}`, // Fallback
+        html: emailHtml,
+        attachments: [
+          {
+            filename: `Receipt-${fullPayment.invoice.invoiceNumber}.pdf`,
+            content: pdfBuffer,
+            contentType: "application/pdf",
+          },
+        ],
       });
+      
       console.log(
         `[EMAIL] Receipt sent to ${fullPayment.invoice.vendor.email} (CC: ${ccEmails.join(", ")})`,
       );

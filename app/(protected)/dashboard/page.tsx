@@ -30,6 +30,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { DemoSeeder } from "@/components/demo-seeder";
 
 interface DashboardData {
   companyId: string;
@@ -244,6 +245,8 @@ export default function DashboardPage() {
           <div>
             <div className="flex items-center gap-2 text-indigo-200 text-sm font-medium mb-2">
               <span>Overview</span>
+              <span className="text-white/20">•</span>
+              <DemoSeeder role={role} />
             </div>
             <h1 className="text-3xl font-bold text-white tracking-tight font-display">
               Welcome back, {user.name?.split(" ")[0]}!

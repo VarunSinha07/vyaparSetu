@@ -116,7 +116,7 @@ export async function GET() {
             status: { in: ["UPLOADED", "UNDER_VERIFICATION"] },
           },
         }),
-        prisma.payment.count({ where: { companyId, status: "PENDING" } }),
+        prisma.payment.count({ where: { companyId, status: "INITIATED" } }),
       ]);
 
       Object.assign(stats, {

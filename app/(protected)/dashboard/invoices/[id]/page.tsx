@@ -13,6 +13,7 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import Script from "next/script";
+import { toast } from "sonner";
 
 interface DetailInvoice {
   id: string;
@@ -117,9 +118,10 @@ export default function InvoiceDetailPage() {
       setShowRejectInput(false);
       setShowMismatchInput(false);
       setReason("");
+      toast.success(`Invoice ${action}ed successfully`);
       fetchInvoice();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : String(err));
+      toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setActionLoading(false);
     }
@@ -165,11 +167,11 @@ export default function InvoiceDetailPage() {
 
             if (!verifyRes.ok) throw new Error("Verification failed");
 
-            alert("Payment Successful and Verified!");
+            toast.success("Payment Successful and Verified!");
             fetchInvoice();
           } catch (err) {
             console.error(err);
-            alert(
+            toast.warning(
               "Payment successful but verification failed. Please contact support.",
             );
           }
@@ -190,7 +192,9 @@ export default function InvoiceDetailPage() {
       ).Razorpay(options);
       rzp1.open();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Payment initiation failed");
+      toast.error(
+        err instanceof Error ? err.message : "Payment initiation failed",
+      );
     } finally {
       setActionLoading(false);
     }
@@ -303,14 +307,28 @@ export default function InvoiceDetailPage() {
           )}
 
           {isPaid && invoice.payments[0] && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-700">
-              <span className="w-2 h-2 rounded-full bg-indigo-600" />
-              <span className="text-sm font-medium">
-                Paid on{" "}
-                {invoice.payments[0].paidAt
-                  ? format(new Date(invoice.payments[0].paidAt), "dd MMM yyyy")
-                  : "N/A"}
-              </span>
+            <div className="flex items-center gap-3">
+              {(userRole === "ADMIN" || userRole === "FINANCE") && (
+                <Link
+                  href={`/dashboard/invoices/${id}/receipt`}
+                  className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4" />
+                  View Receipt
+                </Link>
+              )}
+              <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-700">
+                <span className="w-2 h-2 rounded-full bg-indigo-600" />
+                <span className="text-sm font-medium">
+                  Paid on{" "}
+                  {invoice.payments[0].paidAt
+                    ? format(
+                        new Date(invoice.payments[0].paidAt),
+                        "dd MMM yyyy",
+                      )
+                    : "N/A"}
+                </span>
+              </div>
             </div>
           )}
         </div>

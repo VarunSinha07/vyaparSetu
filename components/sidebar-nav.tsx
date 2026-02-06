@@ -9,6 +9,8 @@ import {
   Settings,
   FileText,
   ShoppingBag,
+  ClipboardList,
+  BarChart,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +36,18 @@ const navItems = [
     name: "Invoices",
     href: "/dashboard/invoices",
     icon: FileText,
+    exact: false,
+  },
+  {
+    name: "Reports",
+    href: "/dashboard/reports",
+    icon: BarChart,
+    exact: false,
+  },
+  {
+    name: "Audit Logs",
+    href: "/dashboard/audit-logs",
+    icon: ClipboardList,
     exact: false,
   },
   {
