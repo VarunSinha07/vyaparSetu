@@ -86,11 +86,11 @@ export async function POST(req: NextRequest) {
 
     await sendEmail({
       to: email,
-      subject: "Invitation to join VyaparSetu",
-      text: `You have been invited to join the team on VyaparSetu. Click the link to accept: ${inviteLink}`,
+      subject: "Invitation to join VyaparFlow",
+      text: `You have been invited to join the team on VyaparFlow. Click the link to accept: ${inviteLink}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #333;">Welcome to VyaparSetu</h2>
+          <h2 style="color: #333;">Welcome to VyaparFlow</h2>
           <p style="color: #555;">You have been invited to join the team.</p>
           <div style="margin: 30px 0;">
             <a href="${inviteLink}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Accept Invitation</a>

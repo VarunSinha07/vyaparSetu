@@ -107,7 +107,7 @@ export function Problem() {
                       </div>
                       <h3 className="text-3xl font-bold">Unified Control</h3>
                       <p className="text-blue-100 leading-relaxed font-medium text-lg">
-                        VyaparSetu centralizes everything. Vendors, invoices,
+                        VyaparFlow centralizes everything. Vendors, invoices,
                         and payments speak the same language in one secure
                         ecosystem.
                       </p>

@@ -30,7 +30,7 @@ export function Navbar() {
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
-            VyaparSetu
+            VyaparFlow
           </span>
         </Link>
 

@@ -147,7 +147,7 @@ export default function InvoiceDetailPage() {
         key: data.key,
         amount: data.amount,
         currency: data.currency,
-        name: "VyaparSetu",
+        name: "VyaparFlow",
         description: `Payment for Invoice #${invoice?.invoiceNumber}`,
         order_id: data.orderId,
         handler: async function (response: {
@@ -177,8 +177,8 @@ export default function InvoiceDetailPage() {
           }
         },
         prefill: {
-          name: "VyaparSetu Finance",
-          email: "finance@vyaparsetu.com",
+          name: "VyaparFlow Finance",
+          email: "finance@vyaparflow.com",
         },
         theme: {
           color: "#4f46e5",

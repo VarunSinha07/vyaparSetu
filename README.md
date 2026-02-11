@@ -1,10 +1,10 @@
-VyaparSetu
+VyaparFlow
 
 A Multi-Tenant Vendor & Procurement Management Platform for Indian MSMEs
 
-VyaparSetu is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
+VyaparFlow is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
 
-In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparSetu aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
+In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparFlow aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
 
 Problem Statement
 
@@ -22,11 +22,11 @@ Payments are tracked separately from approvals
 
 These practices often result in delays, payment disputes, GST compliance risks, and lack of accountability.
 
-VyaparSetu addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
+VyaparFlow addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
 
-What VyaparSetu Does
+What VyaparFlow Does
 
-VyaparSetu digitizes the complete procurement lifecycle in one platform:
+VyaparFlow digitizes the complete procurement lifecycle in one platform:
 
 Purchase Request → Approval → Purchase Order → Invoice → Payment
 
@@ -34,7 +34,7 @@ Each step is company-scoped, role-based, and auditable, ensuring clarity and con
 
 User Roles
 
-Each company using VyaparSetu has internal users with defined roles:
+Each company using VyaparFlow has internal users with defined roles:
 
 Admin – Company owner or system administrator
 
@@ -232,7 +232,7 @@ Accounting software integrations
 
 Why This Project Matters
 
-VyaparSetu is not just a CRUD application. It demonstrates:
+VyaparFlow is not just a CRUD application. It demonstrates:
 
 Real-world problem solving
 

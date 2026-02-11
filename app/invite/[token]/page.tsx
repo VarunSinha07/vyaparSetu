@@ -131,7 +131,7 @@ export default async function InvitePage({ params }: PageProps) {
             <div className="bg-indigo-600 p-1.5 rounded-lg">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-gray-900">VyaparSetu</span>
+            <span className="font-bold text-gray-900">VyaparFlow</span>
           </div>
         </div>
 
@@ -172,7 +172,7 @@ export default async function InvitePage({ params }: PageProps) {
           {/* Footer */}
           <div className="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-400">
-              Secure invitation powered by VyaparSetu
+              Secure invitation powered by VyaparFlow
             </p>
           </div>
         </div>

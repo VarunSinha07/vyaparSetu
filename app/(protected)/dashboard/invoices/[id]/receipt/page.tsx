@@ -77,7 +77,7 @@ export default async function ReceiptPage(props: {
           <div className="flex flex-row justify-between p-10 bg-slate-50 border-b border-slate-100">
             <div>
               <div className="text-3xl font-bold text-indigo-600 tracking-tight">
-                VyaparSetu
+                VyaparFlow
               </div>
               <div className="text-xs text-slate-500 mt-1 uppercase tracking-wide">
                 Finance Automation Platform
@@ -208,7 +208,7 @@ export default async function ReceiptPage(props: {
               This receipt is electronically generated and is valid without a
               signature.
               <br />
-              Generated on {format(new Date(), "PPP")} via VyaparSetu Platform.
+              Generated on {format(new Date(), "PPP")} via VyaparFlow Platform.
             </div>
           </div>
         </div>

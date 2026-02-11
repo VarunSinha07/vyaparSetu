@@ -29,7 +29,7 @@ export function Hero() {
             .
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            VyaparSetu helps Indian MSMEs manage vendors, approvals, invoices,
+            VyaparFlow helps Indian MSMEs manage vendors, approvals, invoices,
             and payments through a secure, role-based platform — no
             spreadsheets, no confusion, no delays.
           </p>
