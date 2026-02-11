@@ -48,7 +48,7 @@ export async function POST(
     if (po.vendor.email) {
       await sendEmail({
         to: po.vendor.email,
-        subject: `Purchase Order ${po.poNumber} from ${context.user?.name || "VyaparFlow"}`,
+        subject: `Purchase Order ${po.poNumber} from ${context.user?.name || "VyaparSetu"}`,
         text: `Dear ${po.vendor.name},\n\nPlease find attached Purchase Order ${po.poNumber} for the amount of ${po.totalAmount}.\n\nTerms: ${po.paymentTerms}\n\nNotes: ${po.notes || "None"}`,
         html: `<div style="font-family: sans-serif;">
                 <h2>Purchase Order Issued</h2>

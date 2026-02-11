@@ -31,7 +31,7 @@ export function CTA() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
-            href="mailto:demo@vyaparflow.in"
+            href="mailto:demo@vyaparsetu.in"
             className="w-full sm:w-auto px-10 py-4 bg-blue-800/40 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-blue-800/60 transition-all border border-blue-400/30 hover:border-blue-400/50"
           >
             Book a Clarity Call

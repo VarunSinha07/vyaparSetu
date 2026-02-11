@@ -30,7 +30,7 @@ export function Navbar() {
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
-            VyaparFlow
+            VyaparSetu
           </span>
         </Link>
 
@@ -46,7 +46,6 @@ export function Navbar() {
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
             </Link>
           ))}
-          
         </nav>
 
         {/* Desktop Actions */}
@@ -93,7 +92,7 @@ export function Navbar() {
                 {item}
               </Link>
             ))}
-            
+
             <hr className="border-gray-100" />
             <div className="grid grid-cols-2 gap-4 pt-2">
               <Link

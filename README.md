@@ -1,10 +1,10 @@
-VyaparFlow
+VyaparSetu
 
 A Multi-Tenant Vendor & Procurement Management Platform for Indian MSMEs
 
-VyaparFlow is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
+VyaparSetu is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
 
-In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparFlow aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
+In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparSetu aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
 
 Problem Statement
 
@@ -22,23 +22,19 @@ Payments are tracked separately from approvals
 
 These practices often result in delays, payment disputes, GST compliance risks, and lack of accountability.
 
-VyaparFlow addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
+VyaparSetu addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
 
+What VyaparSetu Does
 
-
-What VyaparFlow Does
-
-VyaparFlow digitizes the complete procurement lifecycle in one platform:
+VyaparSetu digitizes the complete procurement lifecycle in one platform:
 
 Purchase Request → Approval → Purchase Order → Invoice → Payment
 
-
 Each step is company-scoped, role-based, and auditable, ensuring clarity and control throughout the process.
-
 
 User Roles
 
-Each company using VyaparFlow has internal users with defined roles:
+Each company using VyaparSetu has internal users with defined roles:
 
 Admin – Company owner or system administrator
 
@@ -49,8 +45,6 @@ Manager – Reviews and approves purchase requests
 Finance – Verifies invoices and initiates vendor payments
 
 Vendors do not log in to the system. They are managed as external entities, which keeps the workflow simple and aligned with real-world practices.
-
-
 
 High-Level System Architecture
 
@@ -80,10 +74,6 @@ Every database query is scoped to the user’s company
 
 Payment status is confirmed only via Razorpay webhooks, not frontend callbacks
 
-
-
-
-
 Core Modules
 Company and User Management
 
@@ -107,13 +97,9 @@ Raised by Procurement or Admin users
 
 Includes purchase justification, department, estimated amount, and priority
 
-
-
 PR lifecycle:
 
 DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED / REJECTED
-
-
 
 Approval Workflow
 
@@ -129,12 +115,9 @@ Created only after a PR is approved
 
 One PO per PR
 
-
-
 PO lifecycle:
 
 DRAFT → ISSUED → CANCELLED
-
 
 Issued POs are locked and cannot be edited
 
@@ -145,8 +128,6 @@ Invoices are uploaded against issued POs
 Invoice numbers are entered exactly as provided by vendors
 
 Finance verifies invoice amounts and GST breakup
-
-
 
 Invoice lifecycle:
 
@@ -178,9 +159,6 @@ Reports include vendor-wise spend and payment aging
 
 Audit Logs
 
-
-
-
 Tracks all important actions such as:
 
 PR approvals
@@ -204,15 +182,12 @@ Create Company
 → Verify Invoice
 → Pay Vendor
 
-
-
 Tech Stack
 
 Frontend
 
 Next.js
 Tailwind CSS
-
 
 Backend
 
@@ -230,7 +205,6 @@ Razorpay (Checkout and Webhooks)
 
 Email
 Nodemailer
-
 
 Key Design Decisions
 
@@ -258,7 +232,7 @@ Accounting software integrations
 
 Why This Project Matters
 
-VyaparFlow is not just a CRUD application. It demonstrates:
+VyaparSetu is not just a CRUD application. It demonstrates:
 
 Real-world problem solving
 
@@ -269,8 +243,6 @@ Secure payment handling
 Role-based workflows
 
 Audit and compliance awareness
-
-
 
 Author
 

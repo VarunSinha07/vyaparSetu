@@ -7,7 +7,7 @@ export function Solution() {
             One Platform. Complete Control.
           </h2>
           <p className="text-lg text-gray-600 leading-relaxed">
-            From onboarding vendors to final payments, VyaparFlow centralizes
+            From onboarding vendors to final payments, VyaparSetu centralizes
             every step of your procurement lifecycle.
           </p>
         </div>

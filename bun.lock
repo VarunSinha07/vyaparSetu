@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "vyaparflow",
+      "name": "vyaparsetu",
       "dependencies": {
         "@google/generative-ai": "^0.24.1",
         "@prisma/adapter-pg": "^7.3.0",

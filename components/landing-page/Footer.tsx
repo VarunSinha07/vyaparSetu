@@ -12,7 +12,7 @@ export function Footer() {
                 <Building2 className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white tracking-tight">
-                VyaparFlow
+                VyaparSetu
               </span>
             </div>
             <p className="text-sm leading-relaxed max-w-sm mb-6 text-gray-500">
@@ -98,7 +98,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm font-medium text-gray-600">
           <p>
-            © {new Date().getFullYear()} VyaparFlow Inc. All rights reserved.
+            © {new Date().getFullYear()} VyaparSetu Inc. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <span>Made with ❤️ in India</span>

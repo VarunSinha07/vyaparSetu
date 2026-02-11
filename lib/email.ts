@@ -46,7 +46,7 @@ export async function sendEmail({
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || '"VyaparFlow" <noreply@vyaparflow.com>',
+      from: process.env.EMAIL_FROM || '"VyaparSetu" <noreply@vyaparsetu.com>',
       to,
       cc,
       subject,

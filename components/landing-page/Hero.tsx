@@ -21,7 +21,6 @@ export function Hero() {
 
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-4xl mx-auto">
-
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 drop-shadow-sm">
             Procurement, Without the{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -30,7 +29,7 @@ export function Hero() {
             .
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            VyaparFlow helps Indian MSMEs manage vendors, approvals, invoices,
+            VyaparSetu helps Indian MSMEs manage vendors, approvals, invoices,
             and payments through a secure, role-based platform — no
             spreadsheets, no confusion, no delays.
           </p>

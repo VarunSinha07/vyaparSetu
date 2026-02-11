@@ -421,7 +421,7 @@ export default function DashboardPage() {
               </div>
               <h3 className="font-bold text-xl tracking-tight">Download App</h3>
               <p className="mt-3 text-gray-400 text-sm leading-relaxed">
-                Get the full power of VyaparFlow on your mobile device. Manage
+                Get the full power of VyaparSetu on your mobile device. Manage
                 procurement from anywhere.
               </p>
               <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-indigo-300 group-hover:text-white transition-colors">

@@ -29,7 +29,7 @@ export function TargetAudience() {
           <div className="mt-12 p-6 bg-blue-50/50 rounded-2xl border border-blue-100 inline-block">
             <p className="text-lg font-medium text-gray-800">
               &ldquo;If you buy goods or services,
-              <span className="text-blue-600 font-bold"> VyaparFlow </span>
+              <span className="text-blue-600 font-bold"> VyaparSetu </span>
               is built for you.&rdquo;
             </p>
           </div>

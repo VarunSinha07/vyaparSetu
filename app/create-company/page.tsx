@@ -64,7 +64,7 @@ export default function CreateCompanyPage() {
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
-            VyaparFlow
+            VyaparSetu
           </span>
         </Link>
         <div className="text-center mb-8">

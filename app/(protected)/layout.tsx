@@ -25,7 +25,7 @@ export default async function ProtectedLayout({
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-            VyaparFlow
+            VyaparSetu
           </span>
         </div>
 
@@ -47,7 +47,7 @@ export default async function ProtectedLayout({
             <div className="bg-indigo-600 p-1.5 rounded-lg">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-gray-900">VyaparFlow</span>
+            <span className="font-bold text-gray-900">VyaparSetu</span>
           </div>
           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium">
             {context.user.name?.[0]}

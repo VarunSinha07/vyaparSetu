@@ -187,7 +187,7 @@ const ReceiptDocument = ({ data }: { data: ReceiptData }) => (
       {/* Header */}
       <View style={styles.headerContainer}>
         <View>
-          <Text style={styles.logo}>VyaparFlow</Text>
+          <Text style={styles.logo}>VyaparSetu</Text>
           <Text style={styles.logoSub}>Finance Automation Platform</Text>
         </View>
         <View style={{ justifyContent: "center" }}>
@@ -311,7 +311,7 @@ const ReceiptDocument = ({ data }: { data: ReceiptData }) => (
         <Text style={styles.footerText}>
           This receipt is electronically generated and is valid without a
           signature.{"\n"}
-          Generated on {format(new Date(), "PPP")} via VyaparFlow Platform.
+          Generated on {format(new Date(), "PPP")} via VyaparSetu Platform.
         </Text>
       </View>
     </Page>

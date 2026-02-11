@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VyaparFlow - Simplifying Procurement for Indian MSMEs",
+  title: "VyaparSetu - Simplifying Procurement for Indian MSMEs",
   description:
     "Digitize vendors, approvals, invoices, and payments — all in one place.",
 };

@@ -28,7 +28,7 @@ export function DemoSeeder({ role }: { role: string }) {
       router.refresh();
       // Reload page to see new stats
       window.location.reload();
-    } catch (err) {
+    } catch {
       toast.error("Failed to load demo data.");
     } finally {
       setLoading(false);

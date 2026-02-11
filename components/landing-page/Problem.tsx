@@ -78,8 +78,8 @@ export function Problem() {
                       </h3>
                       <p className="text-gray-700 leading-relaxed font-medium text-lg">
                         Relying on scattered tools creates a breeding ground for
-                        errors, fraud, and delays. It&apos;s a house of cards waiting
-                        to fall.
+                        errors, fraud, and delays. It&apos;s a house of cards
+                        waiting to fall.
                       </p>
                       <div className="grid grid-cols-2 gap-4 mt-8">
                         <div className="bg-white/80 p-4 rounded-xl backdrop-blur-sm border border-red-200 shadow-sm">
@@ -107,7 +107,7 @@ export function Problem() {
                       </div>
                       <h3 className="text-3xl font-bold">Unified Control</h3>
                       <p className="text-blue-100 leading-relaxed font-medium text-lg">
-                        VyaparFlow centralizes everything. Vendors, invoices,
+                        VyaparSetu centralizes everything. Vendors, invoices,
                         and payments speak the same language in one secure
                         ecosystem.
                       </p>

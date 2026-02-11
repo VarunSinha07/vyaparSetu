@@ -65,7 +65,7 @@ export function generatePaymentSuccessEmail(data: {
       </p>
     </div>
     <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} VyaparFlow Finance. All rights reserved.</p>
+      <p>&copy; ${new Date().getFullYear()} VyaparSetu Finance. All rights reserved.</p>
       <p>This is an automated message, please do not reply.</p>
     </div>
   </div>
