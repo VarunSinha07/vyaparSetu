@@ -57,14 +57,16 @@ interface AgingData {
 }
 
 // Recharts tooltip props are often loose, but we can type them partially
+interface TooltipPayloadEntry {
+  name: string;
+  value: number | string;
+  color: string;
+  payload: Record<string, unknown>;
+}
+
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: Array<{
-    name: string;
-    value: number | string;
-    color: string;
-    payload: any;
-  }>;
+  payload?: TooltipPayloadEntry[];
   label?: string;
 }
 
@@ -75,7 +77,10 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
         <p className="font-semibold text-slate-700 mb-1">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} style={{ color: entry.color }}>
-            {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
+            {entry.name}:{" "}
+            {typeof entry.value === "number"
+              ? entry.value.toLocaleString()
+              : entry.value}
           </p>
         ))}
       </div>
@@ -85,7 +90,8 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 export function VendorSpendChart({ data }: { data: VendorSpendData[] }) {
-  if (!data || data.length === 0) return <NoData message="No vendor spend data available" />;
+  if (!data || data.length === 0)
+    return <NoData message="No vendor spend data available" />;
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -94,27 +100,43 @@ export function VendorSpendChart({ data }: { data: VendorSpendData[] }) {
         data={data}
         margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          horizontal={true}
+          vertical={false}
+          stroke="#e2e8f0"
+        />
         <XAxis type="number" hide />
-        <YAxis 
-          type="category" 
-          dataKey="name" 
-          width={100} 
-          tick={{ fontSize: 11, fill: "#64748b" }} 
+        <YAxis
+          type="category"
+          dataKey="name"
+          width={100}
+          tick={{ fontSize: 11, fill: "#64748b" }}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Bar dataKey="amount" name="Spend (₹)" fill={COLORS.indigo} radius={[0, 4, 4, 0]} barSize={20} />
+        <Bar
+          dataKey="amount"
+          name="Spend (₹)"
+          fill={COLORS.indigo}
+          radius={[0, 4, 4, 0]}
+          barSize={20}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
-export function ProcurementStatusChart({ data }: { data: ProcurementStatusData[] }) {
-  if (!data || data.length === 0) return <NoData message="No PR status data available" />;
+export function ProcurementStatusChart({
+  data,
+}: {
+  data: ProcurementStatusData[];
+}) {
+  if (!data || data.length === 0)
+    return <NoData message="No PR status data available" />;
 
-  const chartData = data.map(d => ({ 
-    ...d, 
-    fill: (PR_COLORS as any)[d.name] || COLORS.gray 
+  const chartData = data.map((d) => ({
+    ...d,
+    fill: (PR_COLORS as Record<string, string>)[d.name] || COLORS.gray,
   }));
 
   return (
@@ -141,34 +163,42 @@ export function ProcurementStatusChart({ data }: { data: ProcurementStatusData[]
 }
 
 export function MonthlySpendChart({ data }: { data: MonthlySpendData[] }) {
-  if (!data || data.length === 0) return <NoData message="No transaction history found" />;
+  if (!data || data.length === 0)
+    return <NoData message="No transaction history found" />;
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-        <XAxis 
-          dataKey="month" 
-          axisLine={false} 
-          tickLine={false} 
-          tick={{ fontSize: 12, fill: "#94a3b8" }} 
+      <LineChart
+        data={data}
+        margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#e2e8f0"
+        />
+        <XAxis
+          dataKey="month"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 12, fill: "#94a3b8" }}
           dy={10}
         />
-        <YAxis 
-          axisLine={false} 
-          tickLine={false} 
-          tick={{ fontSize: 11, fill: "#94a3b8" }} 
-          tickFormatter={(val) => `₹${(val/1000).toFixed(0)}k`}
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 11, fill: "#94a3b8" }}
+          tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Line 
-          type="monotone" 
-          dataKey="amount" 
-          name="Total Spend" 
-          stroke={COLORS.blue} 
-          strokeWidth={3} 
+        <Line
+          type="monotone"
+          dataKey="amount"
+          name="Total Spend"
+          stroke={COLORS.blue}
+          strokeWidth={3}
           dot={{ r: 4, fill: COLORS.blue, strokeWidth: 2, stroke: "#fff" }}
-          activeDot={{ r: 6 }} 
+          activeDot={{ r: 6 }}
         />
       </LineChart>
     </ResponsiveContainer>
@@ -180,21 +210,39 @@ export function AgingChart({ data }: { data: AgingData[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-        <XAxis dataKey="bucket" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+      <BarChart
+        data={data}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#e2e8f0"
+        />
+        <XAxis
+          dataKey="bucket"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 12, fill: "#64748b" }}
+        />
         <YAxis axisLine={false} tickLine={false} />
-        <Tooltip cursor={{ fill: '#f8fafc' }} content={<CustomTooltip />} />
-        <Bar dataKey="value" name="Invoices Count" fill={COLORS.red} radius={[4, 4, 0, 0]} barSize={40} />
+        <Tooltip cursor={{ fill: "#f8fafc" }} content={<CustomTooltip />} />
+        <Bar
+          dataKey="value"
+          name="Invoices Count"
+          fill={COLORS.red}
+          radius={[4, 4, 0, 0]}
+          barSize={40}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
 function NoData({ message }: { message: string }) {
-    return (
-        <div className="h-[300px] w-full flex items-center justify-center bg-slate-50 rounded-lg border border-dashed border-slate-200">
-            <p className="text-sm text-slate-400 font-medium">{message}</p>
-        </div>
-    )
+  return (
+    <div className="h-[300px] w-full flex items-center justify-center bg-slate-50 rounded-lg border border-dashed border-slate-200">
+      <p className="text-sm text-slate-400 font-medium">{message}</p>
+    </div>
+  );
 }
