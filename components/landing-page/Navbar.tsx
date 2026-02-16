@@ -18,50 +18,50 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? "bg-white/90 backdrop-blur-md border-gray-200 shadow-sm py-3"
-          : "bg-white/0 border-transparent py-5"
+          ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm py-3"
+          : "bg-white border-transparent py-5"
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/20">
+          <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 p-2 rounded-lg group-hover:shadow-lg group-hover:shadow-indigo-600/30 transition-all duration-300">
             <Building2 className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
+          <span className="text-xl font-bold text-gray-900 tracking-tight">
             VyaparFlow
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-          {["Features", "How It Works", "Security"].map((item) => (
+        <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-700">
+          {["Features", "How It Works", "Pricing"].map((item) => (
             <Link
               key={item}
-              href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="relative hover:text-blue-600 transition-colors py-1 group"
+              href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+              className="px-3 py-2 rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-all duration-200"
             >
               {item}
-              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
             </Link>
           ))}
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           <Link
             href="/sign-in"
-            className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
+            className="px-4 py-2.5 text-sm font-semibold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200"
           >
-            Log in
+            Sign In
           </Link>
           <Link
             href="/sign-up"
-            className="group relative inline-flex items-center justify-center rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-gray-800 transition-all hover:shadow-lg active:scale-95"
+            className="group relative px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-sm font-semibold rounded-lg shadow-md shadow-indigo-600/30 hover:shadow-lg hover:shadow-indigo-600/50 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
           >
-            Get Started
-            <div className="absolute inset-0 rounded-lg ring-2 ring-white/20 group-hover:ring-white/40 transition-all pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative">Get Started</span>
           </Link>
         </div>
 
@@ -80,34 +80,35 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl animate-in slide-in-from-top-5 duration-200">
-          <div className="p-4 space-y-4">
-            {["Features", "How It Works", "Security"].map((item) => (
+        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <div className="px-4 py-4 space-y-2">
+            {["Features", "How It Works", "Pricing"].map((item) => (
               <Link
                 key={item}
-                href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="block text-gray-700 font-medium hover:text-blue-600 py-2"
+                href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                className="block px-4 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-indigo-600 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item}
               </Link>
             ))}
 
-            <hr className="border-gray-100" />
-            <div className="grid grid-cols-2 gap-4 pt-2">
+            <hr className="my-3 border-gray-200" />
+
+            <div className="flex gap-3 pt-2">
               <Link
                 href="/sign-in"
-                className="flex items-center justify-center px-4 py-3 rounded-lg border border-gray-200 font-bold text-gray-700 active:bg-gray-50 bg-white"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Log In
+                Sign In
               </Link>
               <Link
                 href="/sign-up"
-                className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 font-bold text-white shadow-lg shadow-blue-200 active:bg-blue-700"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors text-center shadow-md"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Sign Up
+                Get Started
               </Link>
             </div>
           </div>

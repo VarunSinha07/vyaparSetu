@@ -1,74 +1,99 @@
 import Link from "next/link";
-import {
-  Briefcase,
-  CheckCircle,
-  FileText,
-  CreditCard,
-  BarChart,
-} from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pt-20 pb-20 lg:pt-32 lg:pb-32 bg-white">
-      {/* Background Blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div
-          className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-100 rounded-full blur-[80px] opacity-60 animate-pulse"
-          style={{ animationDuration: "4s" }}
-        />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-50 rounded-full blur-[80px] opacity-60" />
+    <section className="relative overflow-hidden pt-24 pb-24 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none opacity-40">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-200 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-200 rounded-full blur-[100px]" />
       </div>
 
-      <div className="container mx-auto px-4 text-center relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 drop-shadow-sm">
-            Procurement, Without the{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              Chaos
-            </span>
-            .
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            VyaparFlow helps Indian MSMEs manage vendors, approvals, invoices,
-            and payments through a secure, role-based platform — no
-            spreadsheets, no confusion, no delays.
-          </p>
+      <div className="container mx-auto px-8 lg:px-16 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column */}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                Digitize Your Vendor & Procurement Operations
+              </h1>
+              <p className="text-xl text-gray-600 leading-relaxed">
+                From purchase requests to payments — manage everything in one
+                structured platform. Built for Indian MSMEs who want control,
+                not chaos.
+              </p>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-            <Link
-              href="/sign-up"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 hover:-translate-y-1 transition-all shadow-xl shadow-blue-200"
-            >
-              Get Started for Your Company
-            </Link>
-            <Link
-              href="#problem"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-lg font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:-translate-y-1 transition-all"
-            >
-              See the Transformation
-            </Link>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center px-8 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+              >
+                Start Free
+              </Link>
+              <Link
+                href="mailto:demo@vyaparflow.in"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl border-2 border-gray-300 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200"
+              >
+                Book Demo
+              </Link>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>GST Ready</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Secure Payments</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Built for MSMEs</span>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left max-w-5xl mx-auto">
-            {[
-              { icon: Briefcase, text: "Vendor & Purchase Management" },
-              { icon: CheckCircle, text: "Approval Workflows" },
-              { icon: FileText, text: "GST-Aware Invoicing" },
-              { icon: CreditCard, text: "Razorpay-Powered Payments" },
-              { icon: BarChart, text: "Audit-Ready Reports" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-4 rounded-xl bg-white hover:bg-blue-50/50 hover:shadow-md transition-all border border-gray-100 cursor-default group"
-              >
-                <div className="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
-                  <item.icon className="w-5 h-5 flex-shrink-0" />
+          {/* Right Column - Dashboard Mockup */}
+          <div className="relative hidden lg:block">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl transform rotate-1 scale-95 opacity-10"></div>
+            <div className="relative bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-2xl p-6 shadow-2xl border border-gray-200">
+              {/* Dashboard Mockup */}
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                    <div className="flex gap-2">
+                      <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+                      <div className="h-2 w-2 rounded-full bg-amber-500"></div>
+                      <div className="h-2 w-2 rounded-full bg-red-500"></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-gray-100 rounded"></div>
+                    <div className="h-2 w-4/5 bg-gray-100 rounded"></div>
+                  </div>
                 </div>
-                <span className="text-gray-700 font-semibold text-sm">
-                  {item.text}
-                </span>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+                    <div className="h-2 w-16 bg-indigo-600 rounded mb-2"></div>
+                    <div className="h-2 w-20 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+                    <div className="h-2 w-16 bg-emerald-600 rounded mb-2"></div>
+                    <div className="h-2 w-20 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                  <div className="h-24 bg-gradient-to-r from-indigo-200 to-emerald-200 rounded"></div>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

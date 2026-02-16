@@ -48,7 +48,7 @@ export function Problem() {
             </button>
             <button
               onClick={() => setActiveTab("solution")}
-              className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "solution" ? "bg-blue-600 text-white shadow-md" : "text-gray-500 hover:text-gray-900"}`}
+              className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "solution" ? "bg-indigo-600 text-white shadow-md" : "text-gray-500 hover:text-gray-900"}`}
             >
               <CheckCircle2 className="w-4 h-4" />
               The Solution
@@ -61,12 +61,12 @@ export function Problem() {
           <div className={`relative transition-all duration-500 transform`}>
             {/* Content Container */}
             <div
-              className={`bg-white rounded-3xl shadow-xl border overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "border-red-100 shadow-red-100/50" : "border-blue-100 shadow-blue-100/50"}`}
+              className={`bg-white rounded-3xl shadow-xl border overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "border-red-100 shadow-red-100/50" : "border-indigo-100 shadow-indigo-100/50"}`}
             >
               <div className="grid md:grid-cols-2">
                 {/* Left Side: Visual/Context */}
                 <div
-                  className={`p-10 flex flex-col justify-center relative overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "bg-red-50" : "bg-blue-600"}`}
+                  className={`p-10 flex flex-col justify-center relative overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "bg-red-50" : "bg-indigo-600"}`}
                 >
                   {activeTab === "problem" ? (
                     <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-500">
@@ -102,29 +102,29 @@ export function Problem() {
                     </div>
                   ) : (
                     <div className="space-y-6 text-white animate-in slide-in-from-right-4 fade-in duration-500">
-                      <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-blue-900/20">
+                      <div className="w-16 h-16 bg-indigo-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-900/40">
                         <CheckCircle2 className="w-8 h-8" />
                       </div>
                       <h3 className="text-3xl font-bold">Unified Control</h3>
-                      <p className="text-blue-100 leading-relaxed font-medium text-lg">
+                      <p className="text-indigo-100 leading-relaxed font-medium text-lg">
                         VyaparFlow centralizes everything. Vendors, invoices,
                         and payments speak the same language in one secure
                         ecosystem.
                       </p>
                       <div className="grid grid-cols-2 gap-4 mt-8">
-                        <div className="bg-blue-800/40 p-4 rounded-xl backdrop-blur-sm border border-blue-400/30">
+                        <div className="bg-indigo-700/40 p-4 rounded-xl backdrop-blur-sm border border-indigo-400/30">
                           <div className="text-2xl font-bold text-white mb-1">
                             100%
                           </div>
-                          <div className="text-xs text-blue-200 font-bold uppercase tracking-wide">
+                          <div className="text-xs text-indigo-200 font-bold uppercase tracking-wide">
                             Audit Trail
                           </div>
                         </div>
-                        <div className="bg-blue-800/40 p-4 rounded-xl backdrop-blur-sm border border-blue-400/30">
+                        <div className="bg-indigo-700/40 p-4 rounded-xl backdrop-blur-sm border border-indigo-400/30">
                           <div className="text-2xl font-bold text-white mb-1">
                             0%
                           </div>
-                          <div className="text-xs text-blue-200 font-bold uppercase tracking-wide">
+                          <div className="text-xs text-indigo-200 font-bold uppercase tracking-wide">
                             Data Loss
                           </div>
                         </div>
@@ -181,7 +181,7 @@ export function Problem() {
                     <div className="mt-12 pt-8 border-t border-gray-100 text-center animate-in fade-in duration-700">
                       <button
                         onClick={() => setActiveTab("solution")}
-                        className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-800 transition-colors group px-6 py-2 rounded-lg hover:bg-blue-50"
+                        className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:text-indigo-800 transition-colors group px-6 py-2 rounded-lg hover:bg-indigo-50"
                       >
                         See how we fix this
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

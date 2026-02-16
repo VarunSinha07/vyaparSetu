@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing-page/Navbar";
 import { Hero } from "@/components/landing-page/Hero";
+import { TrustBar } from "@/components/landing-page/TrustBar";
 import { Problem } from "@/components/landing-page/Problem";
 import { Solution } from "@/components/landing-page/Solution";
 import { HowItWorks } from "@/components/landing-page/HowItWorks";
@@ -12,10 +13,11 @@ import { Footer } from "@/components/landing-page/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <div className="flex flex-col min-h-screen bg-white text-gray-900 font-sans">
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <TrustBar />
         <Problem />
         <Solution />
         <HowItWorks />
