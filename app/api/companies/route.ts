@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, address } = body;
+    const { name, email, phone, address, logo, gstin, industry } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -36,6 +36,9 @@ export async function POST(req: Request) {
           email,
           phone,
           address,
+          logo,
+          gstin,
+          industry,
         },
       });
 

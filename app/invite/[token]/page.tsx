@@ -2,12 +2,13 @@ import prisma from "@/lib/prisma";
 import InviteForm from "./invite-form";
 import { notFound } from "next/navigation";
 import {
-  Building2,
   XCircle,
   CheckCircle,
   ShieldCheck,
-  Mail,
+  ArrowRight,
+  UserPlus,
 } from "lucide-react";
+import Link from "next/link";
 
 interface PageProps {
   params: Promise<{
@@ -17,42 +18,66 @@ interface PageProps {
 
 interface StatusCardProps {
   icon: React.ElementType;
-  color: string;
   title: string;
   message: string;
   linkText?: string;
   linkHref?: string;
+  variant?: "success" | "error" | "info";
 }
 
-// Helper for Status Screens
 const StatusCard = ({
   icon: Icon,
-  color,
   title,
   message,
   linkText,
   linkHref,
-}: StatusCardProps) => (
-  <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-4 font-sans">
-    <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-gray-900/5 text-center p-12">
-      <div
-        className={`mx-auto w-20 h-20 rounded-2xl flex items-center justify-center mb-6 bg-${color}-50`}
-      >
-        <Icon className={`w-10 h-10 text-${color}-600`} />
-      </div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-3">{title}</h1>
-      <p className="text-gray-500 mb-8 leading-relaxed">{message}</p>
-      {linkText && (
-        <a
-          href={linkHref}
-          className={`inline-flex px-6 py-3 rounded-xl bg-${color}-600 text-white font-semibold hover:bg-${color}-700 transition-colors shadow-lg shadow-${color}-600/30`}
+  variant = "info",
+}: StatusCardProps) => {
+  const colors = {
+    success: {
+      bg: "bg-emerald-50 text-emerald-600",
+      text: "text-emerald-900",
+      button: "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20",
+    },
+    error: {
+      bg: "bg-red-50 text-red-600",
+      text: "text-red-900",
+      button: "bg-red-600 hover:bg-red-700 shadow-red-500/20",
+    },
+    info: {
+      bg: "bg-blue-50 text-blue-600",
+      text: "text-blue-900",
+      button: "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20",
+    },
+  };
+
+  const theme = colors[variant];
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-4 font-sans">
+      <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-gray-200 text-center p-10 animate-in fade-in zoom-in-95 duration-300">
+        <div
+          className={`mx-auto w-20 h-20 rounded-2xl flex items-center justify-center mb-6 ${theme.bg}`}
         >
-          {linkText}
-        </a>
-      )}
+          <Icon className="w-10 h-10" />
+        </div>
+        <h1 className={`text-2xl font-bold ${theme.text} mb-3`}>{title}</h1>
+        <p className="text-gray-500 mb-8 leading-relaxed max-w-xs mx-auto">
+          {message}
+        </p>
+        {linkText && linkHref && (
+          <Link
+            href={linkHref}
+            className={`inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all shadow-lg hover:-translate-y-0.5 ${theme.button}`}
+          >
+            {linkText}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default async function InvitePage({ params }: PageProps) {
   const { token } = await params;
@@ -68,9 +93,9 @@ export default async function InvitePage({ params }: PageProps) {
     return (
       <StatusCard
         icon={XCircle}
-        color="red"
+        variant="error"
         title="Invitation Expired"
-        message="This invitation link is no longer valid. Please ask your administrator to send a new one."
+        message="This invitation link is no longer valid. Please invite request a new one."
       />
     );
   }
@@ -79,7 +104,7 @@ export default async function InvitePage({ params }: PageProps) {
     return (
       <StatusCard
         icon={CheckCircle}
-        color="emerald"
+        variant="success"
         title="Already Accepted"
         message="You have already joined the company using this invitation."
         linkText="Go to Login"
@@ -106,7 +131,7 @@ export default async function InvitePage({ params }: PageProps) {
       return (
         <StatusCard
           icon={ShieldCheck}
-          color="blue"
+          variant="info"
           title="Already a Member"
           message={`You are already a member of ${invitation.company.name}.`}
           linkText="Go to Dashboard"
@@ -117,65 +142,44 @@ export default async function InvitePage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-4 font-sans">
-      {/* Background Decorative Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 translate-y-1/2 w-[500px] h-[500px] bg-violet-200/40 rounded-full blur-3xl" />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-[#009688] font-sans relative">
+      <div className="w-full max-w-[480px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-500 m-4">
+        {/* Content */}
+        <div className="flex flex-col items-center text-center mb-8">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-5 ring-1 ring-white/30 shadow-lg">
+            <UserPlus className="w-8 h-8 text-white" />
+          </div>
 
-      <div className="w-full max-w-lg relative z-10">
-        {/* Brand Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white p-3 rounded-2xl shadow-xl shadow-indigo-600/10 flex items-center gap-2 ring-1 ring-gray-100">
-            <div className="bg-indigo-600 p-1.5 rounded-lg">
-              <Building2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-gray-900">VyaparFlow</span>
+          <h2 className="text-3xl font-bold text-white mb-2 leading-tight tracking-tight drop-shadow-sm">
+            Join the Team
+          </h2>
+          <p className="text-emerald-50 text-sm font-medium mb-5">
+            You&apos;ve been invited to join
+            <span className="font-bold text-white ml-1">
+              {invitation.company.name}
+            </span>
+          </p>
+
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md shadow-sm">
+            <span className="text-xs font-bold text-white tracking-widest uppercase">
+              ROLE: {invitation.role}
+            </span>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-gray-200/50 backdrop-blur-xl">
-          {/* Header */}
-          <div className="relative overflow-hidden bg-slate-900 px-8 py-10 text-center">
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-indigo-600 rounded-full blur-3xl opacity-50" />
-            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-violet-600 rounded-full blur-3xl opacity-50" />
-
-            <div className="relative z-10">
-              <div className="mx-auto w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 ring-1 ring-white/20 shadow-lg">
-                <Mail className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold tracking-tight text-white mb-2">
-                Start collaborating with
-              </h2>
-              <h3 className="text-xl font-medium text-indigo-200">
-                {invitation.company.name}
-              </h3>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="px-8 py-10 bg-white">
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100 uppercase tracking-wide">
-                Invited as {invitation.role}
-              </span>
-            </div>
-
-            <InviteForm
-              token={token}
-              email={invitation.email}
-              isExistingUser={!!existingUser}
-            />
-          </div>
-
-          {/* Footer */}
-          <div className="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-400">
-              Secure invitation powered by VyaparFlow
-            </p>
-          </div>
+        {/* Card */}
+        <div className="bg-white rounded-3xl p-8 shadow-2xl shadow-emerald-900/20 ring-1 ring-black/5">
+          <InviteForm
+            token={token}
+            email={invitation.email}
+            isExistingUser={!!existingUser}
+          />
         </div>
+
+        <p className="text-center text-xs text-emerald-100/60 mt-8 font-medium">
+          &copy; {new Date().getFullYear()} VyaparFlow. Secure invitation
+          system.
+        </p>
       </div>
     </div>
   );

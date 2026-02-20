@@ -4,18 +4,19 @@ import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { CompanyRole } from "@/app/generated/prisma/enums";
 import { toast } from "sonner";
+import { Mail, ShieldCheck, Loader2, ArrowRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
-  Building2,
-  Mail,
-  ShieldCheck,
-  UserPlus,
-  Loader2,
-  CheckCircle2,
-  ArrowRight,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function InviteMember() {
-  const { data: session } = authClient.useSession();
+  const {} = authClient.useSession();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<CompanyRole>("MANAGER");
   const [loading, setLoading] = useState(false);
@@ -48,111 +49,77 @@ export default function InviteMember() {
     }
   };
 
-  if (!(session?.user as { companyId?: string })?.companyId) return null;
+  // Removed strict companyId check as the API handles validation and session might not have it client-side yet
+  // Also removed the specific session check here since the parent handles session validation
+  // and we want to ensure the form renders even if session is still loading/updating in this component
+  // if (!session) return null;
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl overflow-hidden relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white/50 to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-      {/* Header Section */}
-      <div className="px-6 py-5 border-b border-gray-100 relative">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 ring-1 ring-indigo-100">
-            <UserPlus className="w-5 h-5" />
+    <form onSubmit={handleInvite} className="flex flex-col gap-5">
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+          Email Address
+        </label>
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
           </div>
-          <div>
-            <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-              Invite Team Member
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                Active
-              </span>
-            </h3>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Send an invitation to join your company workspace.
-            </p>
-          </div>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 py-3 pl-11 pr-4 text-gray-900 text-sm font-medium shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all hover:bg-white focus:bg-white"
+            placeholder="colleague@company.com"
+          />
         </div>
       </div>
 
-      {/* Form Section */}
-      <div className="p-6 relative">
-        <form
-          onSubmit={handleInvite}
-          className="flex flex-col xl:flex-row gap-4 xl:items-end"
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+          Role Permission
+        </label>
+        <Select
+          value={role}
+          onValueChange={(value) => setRole(value as CompanyRole)}
         >
-          {/* Email Field */}
-          <div className="flex-1 space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5 ml-1">
-              <Mail className="w-3.5 h-3.5 text-gray-400" />
-              Email Address
-            </label>
-            <div className="relative group/input">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-xl border-gray-200 bg-gray-50/50 py-2.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-500 focus:bg-white transition-all sm:text-sm sm:leading-6"
-                placeholder="colleague@company.com"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none opacity-0 group-focus-within/input:opacity-100 transition-opacity">
-                <span className="text-xs text-gray-400">Press Enter ↵</span>
-              </div>
+          <SelectTrigger className="w-full rounded-xl border-gray-200 bg-gray-50/50 py-3 pl-3 pr-3 text-gray-900 text-sm font-medium shadow-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="h-5 w-5 text-gray-400" />
+              <SelectValue placeholder="Select role..." />
             </div>
-          </div>
-
-          {/* Role Selection */}
-          <div className="w-full xl:w-48 space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5 ml-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-gray-400" />
-              Role
-            </label>
-            <div className="relative">
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value as CompanyRole)}
-                className="block w-full rounded-xl border-gray-200 bg-gray-50/50 py-2.5 pl-3 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 focus:bg-white transition-all sm:text-sm sm:leading-6 cursor-pointer hover:bg-white"
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(CompanyRole).map((r) => (
+              <SelectItem
+                key={r}
+                value={r}
+                className="cursor-pointer focus:bg-emerald-50 focus:text-emerald-700 font-medium"
               >
-                <option value="ADMIN">Admin</option>
-                <option value="MANAGER">Manager</option>
-                <option value="PROCUREMENT">Procurement</option>
-                <option value="FINANCE">Finance</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <Building2 className="h-4 w-4 text-gray-400" />
-              </div>
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full xl:w-auto min-w-[120px] rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-200 hover:bg-indigo-500 hover:shadow-indigo-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center gap-2 group/btn"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin h-4 w-4" />
-                <span>Sending...</span>
-              </>
-            ) : (
-              <>
-                <span>Send Invite</span>
-                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 bg-indigo-50/50 p-2 rounded-lg border border-indigo-100/50">
-          <div className="w-1 h-1 rounded-full bg-indigo-400" />
-          <p>
-            Admins have full access, while Managers can only view and edit their
-            own scope.
-          </p>
-        </div>
+                {r}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-    </div>
+
+      <Button
+        type="submit"
+        disabled={loading}
+        className="mt-2 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 font-bold text-white shadow-lg shadow-emerald-600/20 hover:from-emerald-700 hover:to-teal-700 hover:shadow-emerald-600/30 transition-all h-12"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Sending Invite...
+          </>
+        ) : (
+          <>
+            Send Invitation
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </>
+        )}
+      </Button>
+    </form>
   );
 }
