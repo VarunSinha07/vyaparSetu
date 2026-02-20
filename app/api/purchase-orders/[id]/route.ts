@@ -93,6 +93,18 @@ export async function PUT(
       },
     });
 
+    // Audit Log
+    await prisma.auditLog.create({
+      data: {
+        companyId: context.companyId,
+        userId: context.profileId!,
+        action: "UPDATE_PO",
+        entity: "PurchaseOrder",
+        entityId: updated.id,
+        metadata: { poNumber: po.poNumber, changes: { paymentTerms, notes } },
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("[PO_UPDATE]", error);

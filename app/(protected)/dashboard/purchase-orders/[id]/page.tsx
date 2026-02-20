@@ -15,6 +15,7 @@ import {
   Mail,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { Timeline } from "@/components/ui/timeline";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,14 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type POStatus = "DRAFT" | "ISSUED" | "CANCELLED";
+
+interface TimelineEvent {
+  id: string;
+  action: string;
+  actor: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
 
 interface PODetails {
   id: string;
@@ -64,6 +73,7 @@ export default function PODetailsPage() {
   const router = useRouter();
   const {} = authClient.useSession();
   const [po, setPo] = useState<PODetails | null>(null);
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -76,6 +86,7 @@ export default function PODetailsPage() {
   });
 
   useEffect(() => {
+    // Fetch PO details
     fetch(`/api/purchase-orders/${params.id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -90,6 +101,12 @@ export default function PODetailsPage() {
         console.error(err);
         setLoading(false);
       });
+
+    // Fetch timeline
+    fetch(`/api/purchase-orders/${params.id}/timeline`)
+      .then((res) => res.json())
+      .then((data) => setTimeline(data))
+      .catch((err) => console.error("Failed to fetch timeline:", err));
   }, [params.id]);
 
   const handleUpdate = async () => {
@@ -410,6 +427,16 @@ export default function PODetailsPage() {
             {format(new Date(po.issuedAt!), "PPP")}.
           </div>
         )}
+
+        {/* Activity Timeline */}
+        <div className="mt-12 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Activity Timeline
+          </h2>
+          <div className="max-h-[600px] overflow-y-auto">
+            <Timeline events={timeline} />
+          </div>
+        </div>
       </div>
 
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>

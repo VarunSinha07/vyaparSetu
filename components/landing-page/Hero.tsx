@@ -5,8 +5,8 @@ export function Hero() {
     <section className="relative overflow-hidden pt-24 pb-24 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none opacity-40">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-200 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-200 rounded-full blur-[100px]" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-200 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-200 rounded-full blur-[100px]" />
       </div>
 
       <div className="container mx-auto px-8 lg:px-16 relative z-10">
@@ -28,13 +28,13 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center px-8 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-lg font-semibold rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
               >
                 Start Free
               </Link>
               <Link
                 href="mailto:demo@vyaparflow.in"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl border-2 border-gray-300 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl border-2 border-gray-300 hover:border-emerald-300 hover:bg-emerald-50 transition-all duration-200"
               >
                 Book Demo
               </Link>
@@ -59,8 +59,8 @@ export function Hero() {
 
           {/* Right Column - Dashboard Mockup */}
           <div className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl transform rotate-1 scale-95 opacity-10"></div>
-            <div className="relative bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-2xl p-6 shadow-2xl border border-gray-200">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl transform rotate-1 scale-95 opacity-10"></div>
+            <div className="relative bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-2xl border border-gray-200">
               {/* Dashboard Mockup */}
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
@@ -80,17 +80,17 @@ export function Hero() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-                    <div className="h-2 w-16 bg-indigo-600 rounded mb-2"></div>
+                    <div className="h-2 w-16 bg-emerald-600 rounded mb-2"></div>
                     <div className="h-2 w-20 bg-gray-200 rounded"></div>
                   </div>
                   <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-                    <div className="h-2 w-16 bg-emerald-600 rounded mb-2"></div>
+                    <div className="h-2 w-16 bg-teal-600 rounded mb-2"></div>
                     <div className="h-2 w-20 bg-gray-200 rounded"></div>
                   </div>
                 </div>
 
                 <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                  <div className="h-24 bg-gradient-to-r from-indigo-200 to-emerald-200 rounded"></div>
+                  <div className="h-24 bg-gradient-to-r from-emerald-200 to-teal-200 rounded"></div>
                 </div>
               </div>
             </div>

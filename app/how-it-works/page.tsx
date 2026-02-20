@@ -1,124 +1,192 @@
-import Link from "next/link";
 import { Navbar } from "@/components/landing-page/Navbar";
 import { Footer } from "@/components/landing-page/Footer";
-import { ArrowRight, CheckCircle, ChevronDown } from "lucide-react";
+import { CTA } from "@/components/landing-page/CTA";
+import {
+  CheckCircle,
+  ChevronDown,
+  UserPlus,
+  FileText,
+  CheckSquare,
+  FileOutput,
+  Receipt,
+  CreditCard,
+  ShieldCheck,
+  Zap,
+  Clock,
+} from "lucide-react";
 
 const STEPS = [
   {
     number: "1",
-    title: "Create Company & Invite Team",
-    desc: "Set up your company workspace and invite team members with role-based access.",
+    title: "Create Workspace",
+    desc: "Set up your company profile and invite team members with specific roles (Admin, Manager, Creator).",
+    icon: UserPlus,
     details: [
-      "Add company details",
-      "Invite team members",
-      "Set approval hierarchies",
+      "Instant workspace setup",
+      "Role-based invitations",
+      "Approval hierarchy configuration",
     ],
   },
   {
     number: "2",
-    title: "Raise Purchase Request",
-    desc: "Department heads create purchase requests with specifications and requirements.",
-    details: ["Define requirements", "Attach documents", "Set delivery dates"],
+    title: "Raise Request",
+    desc: "Team members create detailed purchase requests with specifications, attachments, and vendor preferences.",
+    icon: FileText,
+    details: [
+      "Standardized request forms",
+      "Document attachments",
+      "Budget tagging",
+    ],
   },
   {
     number: "3",
-    title: "Manager Approval",
-    desc: "Managers review and approve requests against budget and compliance.",
+    title: "Smart Approval",
+    desc: "Managers receive instant notifications to review requests against budgets and compliance policies.",
+    icon: CheckSquare,
     details: [
-      "Review specifications",
-      "Check budget limits",
-      "Provide feedback",
+      "One-click approvals",
+      "Budget visibility",
+      "Comment & feedback loop",
     ],
   },
   {
     number: "4",
-    title: "Issue Purchase Order",
-    desc: "System generates professional PO with tax breakdowns and compliance documentation.",
-    details: ["Auto-generated PO", "GST calculations", "Vendor notification"],
+    title: "Auto-Generate PO",
+    desc: "Approved requests are instantly converted into professional, tax-compliant Purchase Orders.",
+    icon: FileOutput,
+    details: [
+      "GST-compliant templates",
+      "Auto-HSN/SAC mapping",
+      "Vendor email notifications",
+    ],
   },
   {
     number: "5",
-    title: "Upload & Verify Invoice",
-    desc: "Vendors submit invoices which are automatically matched with PO and GRN.",
-    details: ["3-way matching", "Tax reconciliation", "Discrepancy flagging"],
+    title: "Invoice Matching",
+    desc: "Upload vendor invoices to automatically match them against the original PO and Goods Received Note (GRN).",
+    icon: Receipt,
+    details: ["3-way matching", "Duplicate detection", "Variance flagging"],
   },
   {
     number: "6",
-    title: "Pay Vendor",
-    desc: "Execute secure payments directly through the platform with complete audit trail.",
-    details: ["Razorpay integration", "Batch payments", "Payment confirmation"],
+    title: "Secure Payment",
+    desc: "Initiate payments directly through the dashboard via UPI, NEFT, or RTGS with a complete audit trail.",
+    icon: CreditCard,
+    details: [
+      "Integrated payment gateway",
+      "Bulk payouts",
+      "Payment reconciliation",
+    ],
+  },
+];
+
+const FAQS = [
+  {
+    q: "How long does setup take?",
+    a: "Setup takes less than 10 minutes. You can import your existing vendors via CSV and invite your team immediately. No technical training is required.",
+  },
+  {
+    q: "Do vendors need to create an account?",
+    a: "No. Your vendors receive secure links via email/WhatsApp to interact with POs and upload invoices. We keep it friction-free for them.",
+  },
+  {
+    q: "Is my data secure?",
+    a: "Absolutely. We use bank-grade 256-bit encryption and strict data isolation. Your financial data is never shared with third parties.",
+  },
+  {
+    q: "Does it work for service procurement?",
+    a: "Yes! VyaparFlow handles both goods and services procurement, including complex milestones and retainer contracts.",
+  },
+  {
+    q: "What about GST compliance?",
+    a: "We are built for India. The system automatically validates GSTINs and ensures every PO and Invoice is compliant with current tax laws.",
   },
 ];
 
 export default function HowItWorksPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-slate-50 font-sans selection:bg-emerald-500/30 selection:text-emerald-900">
       <Navbar />
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="pt-20 pb-12 lg:pt-24 lg:pb-16 bg-gradient-to-br from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                How VyaparFlow Works
-              </h1>
-              <p className="text-lg lg:text-xl text-gray-600">
-                A simple, structured 6-step process that replaces chaos with
-                clarity.
-              </p>
+      <main className="flex-1 pt-20">
+        {/* Hero Section */}
+        <section className="relative py-24 lg:py-32 overflow-hidden bg-emerald-950">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-teal-900/40 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2" />
+
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 text-sm font-medium backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Simple. Structured. Secure.
             </div>
+
+            <h1 className="text-4xl lg:text-7xl font-bold tracking-tight text-white mb-6">
+              From Chaos to Clarity in <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
+                6 Simple Steps
+              </span>
+            </h1>
+            <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed">
+              Replace endless email threads and scattered spreadsheets with a
+              single, unified workflow designed for Indian MSMEs.
+            </p>
           </div>
         </section>
 
-        {/* Steps */}
-        <section className="py-20 lg:py-24">
-          <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto space-y-6">
+        {/* Process Steps */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="container mx-auto px-4 max-w-5xl relative z-10">
+            {/* Connecting Line (Desktop) */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-200/50 via-emerald-500/20 to-transparent hidden md:block" />
+
+            <div className="space-y-12 md:space-y-24">
               {STEPS.map((step, i) => (
-                <div key={i} className="relative">
-                  {/* Connection line */}
-                  {i < STEPS.length - 1 && (
-                    <div className="absolute left-6 top-24 w-0.5 h-24 bg-gradient-to-b from-indigo-300 to-emerald-300"></div>
-                  )}
+                <div
+                  key={i}
+                  className={`flex flex-col md:flex-row items-center gap-8 md:gap-16 relative ${i % 2 === 0 ? "" : "md:flex-row-reverse"}`}
+                >
+                  {/* Timeline Dot (Desktop) */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-4 border-white bg-emerald-500 shadow-lg hidden md:block z-20" />
 
-                  <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:shadow-xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 relative z-10">
-                    <div className="grid md:grid-cols-3 gap-6 items-start">
-                      {/* Step Number */}
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-600/30 flex-shrink-0">
-                          {step.number}
-                        </div>
-                        <div className="pt-1">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                            {step.title}
-                          </h3>
-                          <p className="text-gray-600 mb-4 leading-relaxed">
-                            {step.desc}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Details */}
-                      <div className="md:col-span-2">
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-sm font-semibold text-gray-700 mb-3">
-                            What happens in this step
-                          </p>
-                          <ul className="space-y-2">
-                            {step.details.map((detail, j) => (
-                              <li
-                                key={j}
-                                className="flex items-center gap-2 text-sm text-gray-600"
-                              >
-                                <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                {detail}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                  {/* Icon Side */}
+                  <div className="w-full md:w-1/2 flex justify-center md:justify-end group">
+                    {/* For even items on desktop, justify-start is handled by flex-row-reverse */}
+                    <div
+                      className={`relative w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-emerald-900/5 flex items-center justify-center rotate-3 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 ${i % 2 !== 0 ? "md:mr-auto" : "md:ml-auto"}`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-transparent opacity-50 rounded-3xl" />
+                      <step.icon className="w-10 h-10 md:w-14 md:h-14 text-emerald-600" />
+                      <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-emerald-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white">
+                        {step.number}
                       </div>
                     </div>
+                  </div>
+
+                  {/* Content Side */}
+                  <div className="w-full md:w-1/2 text-center md:text-left">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                      {step.title}
+                    </h3>
+                    <p className="text-slate-600 mb-6 leading-relaxed">
+                      {step.desc}
+                    </p>
+
+                    <ul className="space-y-2 inline-block text-left">
+                      {step.details.map((detail, j) => (
+                        <li
+                          key={j}
+                          className="flex items-center gap-3 text-sm text-slate-700 font-medium"
+                        >
+                          <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               ))}
@@ -126,124 +194,47 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        {/* Timeline Visual */}
-        <section className="py-16 lg:py-20 bg-gradient-to-br from-indigo-50 to-emerald-50">
+        {/* Value Props Grid */}
+        <section className="py-24 bg-white border-y border-slate-100">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">
-                The Complete Cycle
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                Why It Works
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                From request to payment, VyaparFlow handles every step
-                efficiently.
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                Designed to remove friction, not add complexity.
               </p>
             </div>
 
-            <div className="max-w-6xl mx-auto">
-              <div className="hidden lg:grid grid-cols-6 gap-4">
-                {[
-                  "Request",
-                  "Approve",
-                  "Order",
-                  "Invoice",
-                  "Verify",
-                  "Pay",
-                ].map((label, i) => (
-                  <div key={i} className="text-center">
-                    <div className="h-24 bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-lg border-2 border-indigo-200 flex items-center justify-center font-bold text-indigo-600 mb-4 relative">
-                      {label}
-                      {i < 5 && (
-                        <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 w-8 h-1 bg-amber-400 rounded-full shadow-sm"></div>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600">Step {i + 1}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="lg:hidden space-y-4">
-                {[
-                  "Request",
-                  "Approve",
-                  "Order",
-                  "Invoice",
-                  "Verify",
-                  "Pay",
-                ].map((label, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
-                      {i + 1}
-                    </div>
-                    <div className="flex-1 bg-indigo-50 rounded-lg p-3 border border-indigo-200">
-                      <p className="font-semibold text-gray-900">{label}</p>
-                    </div>
-                    {i < 5 && (
-                      <ArrowRight className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* What You Get */}
-        <section className="py-20 lg:py-24 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">
-                What You Get
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                A complete procurement operating system designed for Indian
-                businesses.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
-                  title: "100% Audit Trail",
-                  desc: "Every action logged for compliance.",
-                  icon: "📋",
+                  icon: Clock,
+                  title: "Save 15 Hours/Week",
+                  desc: "Automate manual data entry and follow-ups so you can focus on strategy.",
                 },
                 {
-                  title: "Real-Time Visibility",
-                  desc: "Know every request, PO, and payment status instantly.",
-                  icon: "👁️",
+                  icon: ShieldCheck,
+                  title: "100% Compliance",
+                  desc: "Never worry about missing documents or tax errors again.",
                 },
                 {
-                  title: "GST Compliance",
-                  desc: "Built-in tax calculations and reporting.",
-                  icon: "✅",
-                },
-                {
-                  title: "Secure Payments",
-                  desc: "Razorpay-powered with complete encryption.",
-                  icon: "🔒",
-                },
-                {
-                  title: "Role-Based Access",
-                  desc: "Control who can see and do what.",
-                  icon: "👤",
-                },
-                {
-                  title: "Detailed Reports",
-                  desc: "Spend analysis and performance insights.",
-                  icon: "📊",
+                  icon: Zap,
+                  title: "Instant Visibility",
+                  desc: "Know exactly where every rupee is going in real-time.",
                 },
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="group bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-lg p-6 border-2 border-indigo-200 hover:border-indigo-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-default"
+                  className="bg-slate-50 rounded-2xl p-8 border border-slate-100 text-center hover:bg-white hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300"
                 >
-                  <div className="text-3xl mb-3 group-hover:scale-110 transition-transform">
-                    {item.icon}
+                  <div className="w-12 h-12 mx-auto bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700 mb-6">
+                    <item.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
+                  <p className="text-slate-600 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -251,113 +242,35 @@ export default function HowItWorksPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 lg:py-24 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Everything you need to know about getting started.
-              </p>
-            </div>
-
-            <div className="max-w-3xl mx-auto space-y-4">
-              {[
-                {
-                  q: "How long does setup take?",
-                  a: "Setup takes just 10-15 minutes. Add your company, invite your team, and start managing procurement immediately.",
-                  color: "indigo",
-                },
-                {
-                  q: "Can existing vendors access the platform?",
-                  a: "No, your vendors don't need accounts. They receive secure invoice upload links and payment notifications via email.",
-                  color: "emerald",
-                },
-                {
-                  q: "Is the data encrypted and secure?",
-                  a: "Yes. We use 256-bit SSL encryption with complete data isolation per company. Banking-grade security standards.",
-                  color: "amber",
-                },
-                {
-                  q: "Can I migrate my existing data?",
-                  a: "We provide data migration support for Enterprise plans. Standard plans include a migration guide and support.",
-                  color: "indigo",
-                },
-                {
-                  q: "What payment methods are supported?",
-                  a: "UPI, NEFT, RTGS, and other methods via Razorpay. All transactions are fully encrypted and audited.",
-                  color: "emerald",
-                },
-                {
-                  q: "Do you offer training and support?",
-                  a: "Yes. All plans include onboarding. Enterprise customers get dedicated training sessions and a dedicated account manager.",
-                  color: "amber",
-                },
-              ].map((item, i) => {
-                const colorClasses = {
-                  indigo:
-                    "border-indigo-200 hover:border-indigo-400 bg-indigo-50",
-                  emerald:
-                    "border-emerald-200 hover:border-emerald-400 bg-emerald-50",
-                  amber: "border-amber-200 hover:border-amber-400 bg-amber-50",
-                };
-                const colorDot = {
-                  indigo: "bg-indigo-500",
-                  emerald: "bg-emerald-500",
-                  amber: "bg-amber-500",
-                };
-
-                return (
-                  <details
-                    key={i}
-                    className={`group bg-white rounded-lg px-6 py-5 border-2 ${colorClasses[item.color as keyof typeof colorClasses]} hover:shadow-md transition-all duration-300 cursor-pointer`}
-                  >
-                    <summary className="flex items-center justify-between font-bold text-gray-900 list-none">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-3 h-3 rounded-full ${colorDot[item.color as keyof typeof colorDot]}`}
-                        />
-                        <span className="group-hover:text-indigo-600 transition-colors">
-                          {item.q}
-                        </span>
-                      </div>
-                      <ChevronDown className="w-5 h-5 text-gray-600 group-open:rotate-180 transition-transform duration-300" />
-                    </summary>
-                    <div className="mt-4 pl-9 text-gray-600 leading-relaxed animate-in fade-in duration-300">
-                      {item.a}
-                    </div>
-                  </details>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="py-20 lg:py-28 bg-gradient-to-r from-indigo-600 to-emerald-500 relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-[-100px] right-[-100px] w-80 h-80 bg-white rounded-full blur-[80px]" />
-          </div>
-
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Ready to Get Started?
+        <section className="py-24 bg-slate-50">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-3xl font-bold text-slate-900 mb-12 text-center">
+              Frequently Asked Questions
             </h2>
-            <p className="text-lg text-emerald-50 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Join the growing community of Indian MSMEs transforming their
-              procurement workflows.
-            </p>
-            <Link
-              href="/sign-up"
-              className="group inline-flex items-center justify-center px-8 py-4 bg-white text-indigo-600 font-bold rounded-lg shadow-xl shadow-indigo-950/50 hover:shadow-emerald-500/50 hover:bg-emerald-50 transition-all duration-300 hover:-translate-y-2 gap-2"
-            >
-              Start Free Trial
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+
+            <div className="space-y-4">
+              {FAQS.map((faq, i) => (
+                <details
+                  key={i}
+                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden [&_summary::-webkit-details-marker]:hidden"
+                >
+                  <summary className="flex items-center justify-between p-6 cursor-pointer font-semibold text-slate-900 hover:text-emerald-700 transition-colors">
+                    {faq.q}
+                    <div className="ml-4 p-1 bg-slate-100 rounded-full group-open:bg-emerald-100 text-slate-400 group-open:text-emerald-600 transition-colors">
+                      <ChevronDown className="w-4 h-4 transition-transform duration-300 group-open:rotate-180" />
+                    </div>
+                  </summary>
+                  <div className="px-6 pb-6 text-slate-600 leading-relaxed animate-in slide-in-from-top-2 fade-in duration-200">
+                    {faq.a}
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
+
+        {/* Reusing the Global CTA */}
+        <CTA />
       </main>
 
       <Footer />

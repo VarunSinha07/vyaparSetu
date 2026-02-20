@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getContext } from "@/lib/context";
 import PRDetailsView from "./pr-details-view";
-import { CompanyRole } from "@/app/generated/prisma/client";
+import { CompanyRole, PRStatus } from "@/app/generated/prisma/client";
 
 export default async function PurchaseRequestDetailsPage({
   params,
@@ -46,7 +46,48 @@ export default async function PurchaseRequestDetailsPage({
     return notFound();
   }
 
-  // 2. Prepare user context for the client component
+  // 2. Fetch timeline data with role-based filtering
+  let timeline: {
+    id: string;
+    action: string;
+    actor: string;
+    timestamp: string;
+    metadata?: Record<string, unknown>;
+  }[] = [];
+
+  // Finance can only view timeline after approval
+  if (context.role === CompanyRole.FINANCE && pr.status !== PRStatus.APPROVED) {
+    // Don't show timeline to Finance for non-approved PRs
+    timeline = [];
+  } else {
+    const auditLogs = await prisma.auditLog.findMany({
+      where: {
+        companyId: context.companyId,
+        entity: "PurchaseRequest",
+        entityId: id,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    timeline = auditLogs.map((log) => ({
+      id: log.id,
+      action: log.action,
+      actor: log.user.name || "Unknown User",
+      timestamp: log.createdAt.toISOString(),
+      metadata: log.metadata as Record<string, unknown>,
+    }));
+  }
+
+  // 3. Prepare user context for the client component
   // We need to pass enough info for the UI to disable/enable buttons
   const currentUser = {
     id: context.profileId,
@@ -54,5 +95,7 @@ export default async function PurchaseRequestDetailsPage({
     userId: context.userId,
   };
 
-  return <PRDetailsView pr={pr} currentUser={currentUser} />;
+  return (
+    <PRDetailsView pr={pr} currentUser={currentUser} timeline={timeline} />
+  );
 }

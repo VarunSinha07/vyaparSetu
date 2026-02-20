@@ -52,13 +52,34 @@ export async function POST(req: Request) {
       const paymentEntity = data.payment.entity;
       const orderId = paymentEntity.order_id;
 
-      await prisma.payment.updateMany({
+      const payment = await prisma.payment.findFirst({
         where: { razorpayOrderId: orderId },
-        data: { status: PaymentStatus.FAILED },
       });
+
+      if (payment) {
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { status: PaymentStatus.FAILED },
+        });
+
+        // Audit Log for Failed Payment
+        await prisma.auditLog.create({
+          data: {
+            companyId: payment.companyId,
+            userId: payment.initiatedById,
+            action: "PAYMENT_FAILED",
+            entity: "Payment",
+            entityId: payment.id,
+            metadata: {
+              amount: payment.amount,
+              reason: "Payment capture failed",
+            },
+          },
+        });
+      }
     }
 
-    return new NextResponse("OK", { status: 200 });
+    return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
     console.error("[WEBHOOK_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });

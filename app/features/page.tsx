@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Navbar } from "@/components/landing-page/Navbar";
 import { Footer } from "@/components/landing-page/Footer";
+import { CTA } from "@/components/landing-page/CTA";
 import {
   Users,
   FileText,
@@ -9,239 +9,232 @@ import {
   FileSearch,
   CreditCard,
   BarChart3,
-  TrendingUp,
   Lock,
   Zap,
-  ArrowRight,
+  Shield,
+  Smartphone,
 } from "lucide-react";
 
 const FEATURES = [
   {
     icon: Users,
     title: "Vendor Management",
-    desc: "Maintain a centralized registry with compliance tracking, GST verification, and document storage.",
+    desc: "Centralized registry with compliance tracking, GST verification, and document storage.",
     benefits: [
-      "Add vendors in bulk",
-      "Track compliance documents",
-      "Performance metrics",
+      "Bulk Vendor Onboarding",
+      "Compliance Document Tracking",
+      "Performance Scorecards",
     ],
-    color: "indigo",
   },
   {
     icon: FileText,
     title: "Purchase Requests",
-    desc: "Create, track, and manage purchase requests with complete visibility across teams.",
+    desc: "Streamlined internal requests with complete visibility and automated routing.",
     benefits: [
-      "Structured forms",
-      "Real-time tracking",
-      "Department-wide visibility",
+      "Customizable Forms",
+      "Real-time Status Tracking",
+      "Department-wise Budget Control",
     ],
-    color: "emerald",
   },
   {
     icon: CheckSquare,
-    title: "Approval Workflows",
-    desc: "Multi-level approvals with complete audit trails and compliance documentation.",
+    title: "Smart Approvals",
+    desc: "Multi-level approval workflows with audit trails and mobile-friendly actions.",
     benefits: [
-      "Hierarchy-based approvals",
-      "Digital signatures",
-      "Complete audit logs",
+      "Hierarchy-based Routing",
+      "One-click Approvals",
+      "Audit & Compliance Logs",
     ],
-    color: "amber",
   },
   {
     icon: FileCheck,
     title: "Purchase Orders",
-    desc: "Generate professional POs instantly with tax breakdowns and vendor compliance checks.",
+    desc: "Generate professional, GST-compliant POs instantly sent to vendors.",
     benefits: [
-      "Auto-HSQN generation",
-      "GST-compliant",
-      "Vendor acknowledgment",
+      "Auto-HSN/SAC Mapping",
+      "One-click PO Generation",
+      "WhatsApp & Email Integration",
     ],
-    color: "indigo",
   },
   {
     icon: FileSearch,
     title: "Invoice Verification",
-    desc: "3-way matching to prevent overpayment and automatically reconcile invoices.",
-    benefits: ["PO matching", "GRN matching", "Tax reconciliation"],
-    color: "emerald",
+    desc: "Automated 3-way matching (PO-GRN-Invoice) to prevent overpayment.",
+    benefits: [
+      "Duplicate Detection",
+      "Tax Reconciliation",
+      "Payment Scheduling",
+    ],
   },
   {
     icon: CreditCard,
     title: "Integrated Payments",
-    desc: "Execute secure payments via UPI, NEFT, or RTGS directly through the platform.",
+    desc: "Seamless payments via UPI, NEFT, or RTGS directly from your dashboard.",
     benefits: [
-      "Single & batch payments",
-      "Payment verification",
-      "Razorpay integrated",
+      "Bulk Payment Processing",
+      "Vendor Payment Links",
+      "Bank Reconciliation",
     ],
-    color: "amber",
   },
   {
     icon: BarChart3,
     title: "Spend Analytics",
-    desc: "Real-time dashboards showing vendor performance, category spend, and savings.",
-    benefits: ["Live dashboards", "Category analysis", "Vendor scorecards"],
-    color: "indigo",
+    desc: "Actionable insights into spending patterns, category distribution, and savings.",
+    benefits: [
+      "Real-time Dashboards",
+      "Category-wise Split",
+      "Cost Saving Reports",
+    ],
   },
   {
     icon: Lock,
-    title: "Role-Based Access",
-    desc: "Control who can see what with granular permission controls.",
-    benefits: ["Department isolation", "Custom permissions", "User management"],
-    color: "emerald",
+    title: "Enterprise Controls",
+    desc: "Granular permission controls ensuring data security and operational integrity.",
+    benefits: [
+      "Role-Based Access (RBAC)",
+      "Department Isolation",
+      "Activity Logs",
+    ],
   },
 ];
 
 export default function FeaturesPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-slate-50 font-sans selection:bg-emerald-500/30 selection:text-emerald-900">
       <Navbar />
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="pt-20 pb-12 lg:pt-24 lg:pb-16 bg-gradient-to-br from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Powerful Procurement, Simplified
+      <main className="flex-1 pt-20">
+        {/* Hero Section */}
+        <section className="relative py-24 lg:py-32 overflow-hidden bg-emerald-950">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-teal-900/40 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 text-sm font-medium backdrop-blur-md">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                The Complete Procurement OS
+              </div>
+
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-white">
+                Everything you need to <br className="hidden md:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
+                  control spend.
+                </span>
               </h1>
-              <p className="text-lg lg:text-xl text-gray-600 mb-8">
-                Every feature is built for efficiency, compliance, and
-                transparency. See what you get.
+
+              <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed">
+                From purchase request to payment, VyaparFlow unifies your entire
+                procurement lifecycle into one intelligent platform.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Features Grid */}
-        <section className="py-20 lg:py-24">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-              {FEATURES.map((feature, i) => {
-                const colorClasses = {
-                  indigo: "bg-indigo-50 text-indigo-600 border-indigo-200",
-                  emerald: "bg-emerald-50 text-emerald-600 border-emerald-200",
-                  amber: "bg-amber-50 text-amber-600 border-amber-200",
-                };
+        {/* Core Features Grid */}
+        <section className="py-24 relative">
+          <div className="absolute inset-0 bg-[#F8FAFC]" />
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {FEATURES.map((feature, i) => (
+                <div
+                  key={i}
+                  className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl hover:shadow-emerald-900/5 border border-slate-200 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+                >
+                  {/* Hover Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50/0 via-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                return (
-                  <div
-                    key={i}
-                    className="group bg-white rounded-lg border-2 border-gray-200 hover:border-indigo-400 hover:shadow-xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-2"
-                  >
-                    <div
-                      className={`w-14 h-14 rounded-lg flex items-center justify-center mb-6 ${colorClasses[feature.color as keyof typeof colorClasses]}`}
-                    >
-                      <feature.icon className="w-7 h-7" />
+                  <div className="relative z-10">
+                    <div className="w-14 h-14 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                      <feature.icon className="w-7 h-7 text-emerald-600 group-hover:text-white transition-colors" />
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+
+                    <p className="text-slate-600 mb-6 leading-relaxed text-sm">
                       {feature.desc}
                     </p>
 
-                    <ul className="space-y-2">
+                    <ul className="space-y-3 pt-6 border-t border-slate-100">
                       {feature.benefits.map((benefit, j) => (
                         <li
                           key={j}
-                          className="flex items-center gap-2 text-sm text-gray-700"
+                          className="flex items-center gap-3 text-sm text-slate-600 font-medium"
                         >
-                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           {benefit}
                         </li>
                       ))}
                     </ul>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Additional Features */}
-        <section className="py-20 lg:py-24 bg-gradient-to-br from-indigo-50 to-emerald-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">
-                Why Teams Choose VyaparFlow
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Beyond features, we provide a complete procurement operating
-                system designed for Indian businesses.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {[
-                {
-                  icon: Zap,
-                  title: "Lightning Fast",
-                  desc: "Deploy in minutes, not months. Start managing your procurement today.",
-                },
-                {
-                  icon: TrendingUp,
-                  title: "Scalable Architecture",
-                  desc: "Grows with your business from 10 to 10,000 transactions per day.",
-                },
-                {
-                  icon: Lock,
-                  title: "Bank-Grade Security",
-                  desc: "256-bit encryption with complete data isolation per company.",
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="group bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200 text-center hover:shadow-lg hover:border-indigo-400 transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                    <item.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="py-20 lg:py-28 bg-gradient-to-r from-indigo-600 to-emerald-500 relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-[-100px] right-[-100px] w-96 h-96 bg-white rounded-full blur-[80px]" />
-          </div>
+        {/* "Why It Matters" Section */}
+        <section className="py-24 bg-white border-y border-slate-100">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+                Built for the Speed of Indian Business
+              </h2>
+              <p className="text-lg text-slate-600">
+                We don&apos;t just digitize paperwork; we engineer velocity into your
+                supply chain.
+              </p>
+            </div>
 
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Transform Your Procurement Today
-            </h2>
-            <p className="text-lg text-emerald-50 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Join Indian MSMEs who have already streamlined their operations
-              with VyaparFlow.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/sign-up"
-                className="group px-8 py-4 bg-white text-indigo-600 font-bold rounded-lg hover:bg-emerald-50 shadow-xl shadow-indigo-950/50 hover:shadow-emerald-500/50 transition-all hover:-translate-y-2 flex items-center justify-center gap-2"
-              >
-                Get Started Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/"
-                className="px-8 py-4 bg-white/15 text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-white/25 hover:border-white/60 transition-all"
-              >
-                Learn More
-              </Link>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[
+                {
+                  icon: Zap,
+                  title: "Deploy in Minutes",
+                  desc: "Zero setup time. Import your vendors and start creating POs instantly.",
+                  gradient: "from-amber-500 to-orange-500",
+                },
+                {
+                  icon: Shield,
+                  title: "Auditor-Ready",
+                  desc: "Every action is logged. Tax and compliance reports are generated automatically.",
+                  gradient: "from-emerald-500 to-teal-500",
+                },
+                {
+                  icon: Smartphone,
+                  title: "Mobile First",
+                  desc: "Approve requests, track orders, and manage payments from anywhere.",
+                  gradient: "from-blue-500 to-indigo-500",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="text-center p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group"
+                >
+                  <div
+                    className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <item.icon className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
+
+        {/* Reusing the New CTA Component */}
+        <CTA />
       </main>
 
       <Footer />

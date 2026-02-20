@@ -96,6 +96,22 @@ export async function POST(req: Request) {
       },
     });
 
+    // 5. Audit Log
+    await prisma.auditLog.create({
+      data: {
+        companyId: context.companyId,
+        userId: context.profileId,
+        action: "PAYMENT_INITIATED",
+        entity: "Payment",
+        entityId: payment.id,
+        metadata: {
+          amount: payment.amount,
+          invoiceId: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+        },
+      },
+    });
+
     return NextResponse.json({
       orderId: order.id,
       amount: order.amount,

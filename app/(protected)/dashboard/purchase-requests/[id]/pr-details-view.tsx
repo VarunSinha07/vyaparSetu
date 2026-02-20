@@ -28,6 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Timeline } from "@/components/ui/timeline";
 import {
   PurchaseRequest,
   CompanyRole,
@@ -44,6 +45,14 @@ interface PRWithRelations extends PurchaseRequest {
   purchaseOrder: { id: string; poNumber: string } | null;
 }
 
+interface TimelineEvent {
+  id: string;
+  action: string;
+  actor: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
 interface PRDetailsViewProps {
   pr: PRWithRelations;
   currentUser: {
@@ -51,11 +60,13 @@ interface PRDetailsViewProps {
     role: CompanyRole;
     userId: string; // auth id
   };
+  timeline: TimelineEvent[];
 }
 
 export default function PRDetailsView({
   pr: initialPr,
   currentUser,
+  timeline,
 }: PRDetailsViewProps) {
   const router = useRouter();
   const [pr] = useState<PRWithRelations>(initialPr);
@@ -483,6 +494,16 @@ export default function PRDetailsView({
                   </p>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Activity Timeline */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Activity Timeline
+            </h2>
+            <div className="max-h-[600px] overflow-y-auto">
+              <Timeline events={timeline} />
             </div>
           </div>
         </div>

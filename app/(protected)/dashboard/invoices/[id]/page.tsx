@@ -14,6 +14,15 @@ import { format } from "date-fns";
 import Link from "next/link";
 import Script from "next/script";
 import { toast } from "sonner";
+import { Timeline } from "@/components/ui/timeline";
+
+interface TimelineEvent {
+  id: string;
+  action: string;
+  actor: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
 
 interface DetailInvoice {
   id: string;
@@ -51,6 +60,7 @@ interface DetailInvoice {
 export default function InvoiceDetailPage() {
   const { id } = useParams();
   const [invoice, setInvoice] = useState<DetailInvoice | null>(null);
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -87,7 +97,14 @@ export default function InvoiceDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    if (id) fetchInvoice();
+    if (id) {
+      fetchInvoice();
+      // Fetch timeline
+      fetch(`/api/invoices/${id}/timeline`)
+        .then((res) => res.json())
+        .then((data) => setTimeline(data))
+        .catch((err) => console.error("Failed to fetch timeline:", err));
+    }
     fetchRole();
   }, [id, fetchInvoice, fetchRole]);
 
@@ -500,6 +517,16 @@ export default function InvoiceDetailPage() {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Activity Timeline */}
+      <div className="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Activity Timeline
+        </h2>
+        <div className="max-h-[600px] overflow-y-auto">
+          <Timeline events={timeline} />
         </div>
       </div>
     </div>
