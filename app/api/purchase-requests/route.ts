@@ -21,6 +21,10 @@ const createPRSchema = z.object({
     .string()
     .optional()
     .transform((str) => (str ? new Date(str) : null)), // Receives string, converts to Date
+  status: z.nativeEnum(PRStatus).optional().default(PRStatus.DRAFT),
+  itemName: z.string().optional(),
+  quantity: z.number().int().positive().optional(),
+  unitPrice: z.number().positive().optional(),
 });
 
 export async function POST(req: Request) {
@@ -57,7 +61,10 @@ export async function POST(req: Request) {
         priority: validatedData.priority,
         budgetCategory: validatedData.budgetCategory,
         requiredBy: validatedData.requiredBy,
-        status: PRStatus.DRAFT,
+        status: validatedData.status,
+        itemName: validatedData.itemName,
+        quantity: validatedData.quantity,
+        unitPrice: validatedData.unitPrice,
       },
       include: {
         preferredVendor: true,

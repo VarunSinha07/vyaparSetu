@@ -29,6 +29,9 @@ const vendorSchema = z.object({
     .optional()
     .or(z.literal("")),
   vendorType: z.nativeEnum(VendorType),
+  isActive: z.boolean().default(true),
+  contactPerson: z.string().optional(),
+  bankName: z.string().optional(),
 });
 
 export async function GET() {
@@ -57,7 +60,15 @@ export async function GET() {
         createdAt: "desc",
       },
     });
-    return NextResponse.json(vendors);
+
+    const maskedVendors = vendors.map((v) => ({
+      ...v,
+      bankAccount: v.bankAccount
+        ? `****${v.bankAccount.slice(-4)}`
+        : v.bankAccount,
+    }));
+
+    return NextResponse.json(maskedVendors);
   } catch (error) {
     console.error("[VENDORS_GET]", error);
     return new NextResponse("Internal Error", { status: 500 });

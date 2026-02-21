@@ -209,8 +209,10 @@ model Vendor {
 
   gstin       String?
   pan         String?
-  bankAccount String? // masked at UI level
+  bankAccount String? 
   ifsc        String?
+  bankName    String?
+  contactPerson String?
 
   vendorType VendorType
   isActive   Boolean    @default(true)
@@ -237,6 +239,9 @@ model PurchaseRequest {
 
   title         String
   description   String?
+  itemName      String?   
+  quantity      Int?      
+  unitPrice     Float?    
   department    String
   estimatedCost Float
   priority      PRPriority @default(NORMAL)

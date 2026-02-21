@@ -8,7 +8,6 @@ import {
   Truck,
   FileText,
   Send,
-  Loader2,
   UserPlus,
   Timer,
   Package,
@@ -32,6 +31,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+
+import { LoadingState } from "@/components/loading-state";
 
 interface DashboardData {
   companyId: string;
@@ -61,16 +62,7 @@ export default function DashboardPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
-          <p className="text-sm text-gray-500 font-medium">
-            Loading dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingState text="Loading your workspace..." />;
   }
 
   if (!data || !session) return null;
@@ -473,7 +465,6 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
