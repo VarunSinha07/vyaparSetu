@@ -49,10 +49,7 @@ export default function InviteMember() {
     }
   };
 
-  // Removed strict companyId check as the API handles validation and session might not have it client-side yet
-  // Also removed the specific session check here since the parent handles session validation
-  // and we want to ensure the form renders even if session is still loading/updating in this component
-  // if (!session) return null;
+  
 
   return (
     <form onSubmit={handleInvite} className="flex flex-col gap-5">
