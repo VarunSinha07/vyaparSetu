@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
-  ArrowLeft,
   FileText,
   Building2,
   CheckCircle2,
@@ -15,7 +14,16 @@ import {
   Send,
   UserCheck,
   Calendar,
-  IndianRupee,
+  MoreVertical,
+  Paperclip,
+  Download,
+  Printer,
+  Edit,
+  Phone,
+  Mail,
+  ShieldCheck,
+  Tag,
+  History,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -28,7 +36,52 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Timeline } from "@/components/ui/timeline";
+
+// Timeline Component
+function Timeline({ events }: { events: TimelineEvent[] }) {
+  return (
+    <div className="space-y-4">
+      {events.length === 0 ? (
+        <p className="text-sm text-slate-500 text-center py-8">
+          No timeline events yet
+        </p>
+      ) : (
+        events.map((event, index) => (
+          <div key={event.id} className="flex gap-4 relative">
+            <div className="flex flex-col items-center">
+              <div className="w-3 h-3 rounded-full bg-emerald-500 mt-1.5"></div>
+              {index < events.length - 1 && (
+                <div className="w-0.5 h-12 bg-slate-200 my-2"></div>
+              )}
+            </div>
+            <div className="pb-4">
+              <p className="text-sm font-semibold text-slate-900">
+                {event.action}
+              </p>
+              <p className="text-xs text-slate-500">
+                by {event.actor} • {format(new Date(event.timestamp), "PPpp")}
+              </p>
+              {event.metadata && (
+                <p className="text-xs text-slate-600 mt-1">
+                  {JSON.stringify(event.metadata)}
+                </p>
+              )}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import {
   PurchaseRequest,
   CompanyRole,
@@ -82,36 +135,47 @@ export default function PRDetailsView({
     switch (status) {
       case "DRAFT":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
-            <FileText className="w-4 h-4" /> Draft
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-slate-100 text-slate-600 border border-slate-200">
+            <FileText className="w-3.5 h-3.5" /> Draft
           </span>
         );
       case "SUBMITTED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
-            <Clock className="w-4 h-4" /> Submitted
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-50 text-blue-700 border border-blue-200">
+            <Clock className="w-3.5 h-3.5" /> Submitted
           </span>
         );
       case "UNDER_REVIEW":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-amber-50 text-amber-700 border border-amber-200">
-            <AlertCircle className="w-4 h-4" /> Under Review
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-200">
+            <AlertCircle className="w-3.5 h-3.5" /> In Review
           </span>
         );
       case "APPROVED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <CheckCircle2 className="w-4 h-4" /> Approved
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5" /> Approved
           </span>
         );
       case "REJECTED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-700 border border-red-200">
-            <XCircle className="w-4 h-4" /> Rejected
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-50 text-rose-700 border border-rose-200">
+            <XCircle className="w-3.5 h-3.5" /> Rejected
           </span>
         );
       default:
         return null;
+    }
+  };
+
+  const getPriorityColor = (priority: string | null) => {
+    switch (priority) {
+      case "URGENT":
+        return "text-rose-600 bg-rose-50 border-rose-200";
+      case "HIGH":
+        return "text-orange-600 bg-orange-50 border-orange-200";
+      default:
+        return "text-emerald-600 bg-emerald-50 border-emerald-200";
     }
   };
 
@@ -125,7 +189,6 @@ export default function PRDetailsView({
     const action = confirmState.action;
     if (!action) return;
 
-    // For reject, prompt for reason
     let body = {};
     if (action === "reject") {
       if (!rejectReason) {
@@ -136,7 +199,6 @@ export default function PRDetailsView({
     }
 
     setLoading(true);
-    setConfirmState({ ...confirmState, isOpen: false }); // Close early or wait?
 
     try {
       const res = await fetch(`/api/purchase-requests/${pr.id}/${action}`, {
@@ -150,14 +212,11 @@ export default function PRDetailsView({
       }
 
       toast.success(`Request ${action} successful`);
-
-      // Ideally re-fetch or update local state logic
-      // Refreshing the page is safest to get new server state
+      setConfirmState({ ...confirmState, isOpen: false });
       router.refresh();
-      window.location.reload(); // Hard reload to ensure data freshness
+      window.location.reload();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
-      setConfirmState({ isOpen: true, action }); // Re-open on error? Or just stay closed.
     } finally {
       setLoading(false);
     }
@@ -203,328 +262,431 @@ export default function PRDetailsView({
     (currentUser.role === "ADMIN" || currentUser.role === "PROCUREMENT");
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
-      {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200/50 pb-6">
-        <div className="flex items-center gap-4">
+    <div className="max-w-7xl mx-auto space-y-8 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col gap-6">
+        {/* Breadcrumb & Back */}
+        <div className="flex items-center gap-2 text-sm text-slate-500">
           <Link
             href="/dashboard/purchase-requests"
-            className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+            className="hover:text-slate-900 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            Purchase Requests
           </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{pr.title}</h1>
-              {getStatusBadge(pr.status)}
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              Created on {format(new Date(pr.createdAt), "PPP")} by{" "}
-              <span className="font-medium text-gray-700">
-                {pr.createdBy.name}
-              </span>
-            </p>
-          </div>
+          <span>/</span>
+          <span className="text-slate-900 font-medium">
+            {pr.id.substring(0, 8)}...
+          </span>
         </div>
 
-        {/* Action Buttons Toolbar */}
-        <div className="flex gap-2">
-          {pr.purchaseOrder && (
-            <Link
-              href={`/dashboard/purchase-orders/${pr.purchaseOrder.id}`}
-              className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-100 transition-all"
-            >
-              <FileText className="w-4 h-4" /> View PO
-            </Link>
-          )}
+        {/* Title & Actions Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+              {pr.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              {getStatusBadge(pr.status)}
+              <span className="text-sm text-slate-500 flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-100">
+                <Calendar className="w-3.5 h-3.5" />
+                Created {format(new Date(pr.createdAt), "PPP")}
+              </span>
+              <span className="text-sm text-slate-500 flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-100">
+                <UserCheck className="w-3.5 h-3.5" />
+                {pr.createdBy.name}
+              </span>
+            </div>
+          </div>
 
-          {canCreatePO && (
-            <button
-              onClick={handleCreatePO}
-              disabled={loading}
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 shadow-sm hover:shadow-emerald-200 transition-all disabled:opacity-50"
-            >
-              <IndianRupee className="w-4 h-4" /> Create PO
-            </button>
-          )}
-
-          {canEdit && (
-            <Link
-              href={`/dashboard/purchase-requests/${pr.id}/edit`}
-              className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
-            >
-              <FileText className="w-4 h-4" /> Edit Request
-            </Link>
-          )}
-
-          {canSubmit && (
-            <button
-              onClick={() => openConfirm("submit")}
-              disabled={loading}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition-all disabled:opacity-50"
-            >
-              <Send className="w-4 h-4" /> Submit Request
-            </button>
-          )}
-
-          {canReview && (
-            <button
-              onClick={() => openConfirm("review")}
-              disabled={loading}
-              className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-600 transition-all disabled:opacity-50"
-            >
-              <UserCheck className="w-4 h-4" /> Review
-            </button>
-          )}
-
-          {canDecide && (
-            <>
-              <button
-                onClick={() => openConfirm("reject")}
+          {/* Action Toolbar */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Primary Actions */}
+            {canSubmit && (
+              <Button
+                onClick={() => openConfirm("submit")}
                 disabled={loading}
-                className="inline-flex items-center gap-2 bg-white border border-red-200 text-red-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-50 transition-all disabled:opacity-50"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200/50 transition-all active:scale-95"
               >
-                <XCircle className="w-4 h-4" /> Reject
-              </button>
-              <button
-                onClick={() => openConfirm("approve")}
+                <Send className="w-4 h-4 mr-2" /> Submit Request
+              </Button>
+            )}
+
+            {canReview && (
+              <Button
+                onClick={() => openConfirm("review")}
                 disabled={loading}
-                className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-emerald-700 transition-all disabled:opacity-50"
+                className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-200/50 transition-all active:scale-95"
               >
-                <CheckCircle2 className="w-4 h-4" /> Approve
-              </button>
-            </>
-          )}
+                <UserCheck className="w-4 h-4 mr-2" /> Start Review
+              </Button>
+            )}
+
+            {canDecide && (
+              <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                <Button
+                  onClick={() => openConfirm("approve")}
+                  disabled={loading}
+                  variant="ghost"
+                  className="text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" /> Approve
+                </Button>
+                <Separator orientation="vertical" className="h-4" />
+                <Button
+                  onClick={() => openConfirm("reject")}
+                  disabled={loading}
+                  variant="ghost"
+                  className="text-rose-700 hover:text-rose-800 hover:bg-rose-50"
+                >
+                  <XCircle className="w-4 h-4 mr-2" /> Reject
+                </Button>
+              </div>
+            )}
+
+            {canCreatePO && (
+              <Button
+                onClick={handleCreatePO}
+                disabled={loading}
+                className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-200/50 transition-all active:scale-95"
+              >
+                <FileText className="w-4 h-4 mr-2" /> Create PO
+              </Button>
+            )}
+
+            {pr.purchaseOrder && (
+              <Link href={`/dashboard/purchase-orders/${pr.purchaseOrder.id}`}>
+                <Button variant="outline" className="gap-2 border-slate-200">
+                  <FileText className="w-4 h-4 text-emerald-600" /> View PO
+                </Button>
+              </Link>
+            )}
+
+            {/* Context Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="w-10 h-10">
+                  <MoreVertical className="w-4 h-4 text-slate-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {canEdit && (
+                  <DropdownMenuItem asChild>
+                    <Link href={`/dashboard/purchase-requests/${pr.id}/edit`}>
+                      <Edit className="w-4 h-4 mr-2" /> Edit Request
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={() => window.print()}>
+                  <Printer className="w-4 h-4 mr-2" /> Print Details
+                </DropdownMenuItem>
+                {/* Add delete option if needed */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Left Column: Details */}
-        <div className="md:col-span-2 space-y-8">
-          {/* Main Attributes */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-50 pb-3">
-              Request Overview
-            </h2>
-
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Department
-                </label>
-                <p className="mt-1 text-sm font-medium text-gray-900 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-gray-400" />{" "}
-                  {pr.department}
-                </p>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Priority
-                </label>
-                <p
-                  className={`mt-1 text-sm font-medium flex items-center gap-2 ${pr.priority === "URGENT" ? "text-red-600" : "text-gray-900"}`}
-                >
-                  {pr.priority === "URGENT" ? (
-                    <AlertCircle className="w-4 h-4 text-red-600" />
-                  ) : (
-                    <Clock className="w-4 h-4 text-gray-400" />
-                  )}
-                  {pr.priority}
-                </p>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Required By
-                </label>
-                <p className="mt-1 text-sm font-medium text-gray-900 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  {pr.requiredBy
-                    ? format(new Date(pr.requiredBy), "PPP")
-                    : "Not specified"}
-                </p>
-              </div>
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Left Column (Content) */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Request Overview Card */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="border-b border-slate-100 p-6 flex justify-between items-center bg-slate-50/50">
+              <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-emerald-600" />
+                Request Details
+              </h2>
+              {/* Optional: Add item count or total badge */}
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-50">
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Estimated Amount
-                </label>
-                <p className="mt-1 text-xl font-bold text-gray-900 font-mono">
-                  ₹{pr.estimatedCost.toLocaleString("en-IN")}
-                </p>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Budget Category
-                </label>
-                <p className="mt-1 text-sm font-medium text-gray-900 flex items-center gap-2">
-                  <IndianRupee className="w-4 h-4 text-gray-400" />
-                  {pr.budgetCategory || "Not specified"}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Justification
-              </label>
-              <div className="mt-2 p-4 bg-gray-50 rounded-xl text-sm text-gray-700 leading-relaxed border border-gray-100">
-                {pr.description || "No description provided."}
-              </div>
-            </div>
-
-            {/* Rejection Reason display */}
-            {pr.status === "REJECTED" && pr.rejectionReason && (
-              <div className="bg-red-50 p-4 rounded-xl border border-red-100">
-                <h3 className="text-red-800 font-semibold text-sm flex items-center gap-2">
-                  <XCircle className="w-4 h-4" /> Rejection Reason
+            <div className="p-6 space-y-8">
+              {/* Description */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Description & Justification
                 </h3>
-                <p className="text-red-600 text-sm mt-1">
-                  {pr.rejectionReason}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Vendor Info */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-50 pb-3">
-              Vendor Information
-            </h2>
-            <div>
-              <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Preferred Vendor
-              </label>
-              {pr.preferredVendor ? (
-                <div className="mt-2 flex items-center justify-between p-3 bg-blue-50/50 rounded-lg border border-blue-100">
-                  <div>
-                    <p className="text-sm text-blue-900 font-semibold hover:underline">
-                      <Link href={`/dashboard/vendors`}>
-                        {pr.preferredVendor.name}
-                      </Link>
-                    </p>
-                    <p className="text-xs text-blue-700 mt-0.5">
-                      {pr.preferredVendor.vendorType} •{" "}
-                      {pr.preferredVendor.email}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <p className="mt-1 text-sm text-gray-400 italic">
-                  No preference specified
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Attachments (Placeholder) */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-50 pb-3">
-              Attachments
-            </h2>
-            <div className="p-8 border-2 border-dashed border-gray-100 rounded-xl flex flex-col items-center justify-center text-center">
-              <FileText className="w-10 h-10 text-gray-200 mb-2" />
-              <p className="text-sm text-gray-400">No documents attached.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Timeline / Audit */}
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Approval Chain
-            </h2>
-            <div className="space-y-6 relative before:absolute before:inset-y-0 before:left-2 before:w-0.5 before:bg-gray-100">
-              {/* Creator Node */}
-              <div className="relative pl-6">
-                <div className="absolute left-0 top-1 p-1 bg-white border border-gray-200 rounded-full">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                </div>
-                <p className="text-sm font-medium text-gray-900">
-                  Request Created
-                </p>
-                <p className="text-xs text-gray-500">
-                  {format(new Date(pr.createdAt), "MMM d, h:mm a")}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  by {pr.createdBy.name}
+                <p className="text-sm leading-relaxed text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  {pr.description || "No specific description provided."}
                 </p>
               </div>
 
-              {/* Approvals List */}
-              {pr.approvals.map((approval) => (
-                <div key={approval.id} className="relative pl-6">
-                  <div className="absolute left-0 top-1 p-1 bg-white border border-gray-200 rounded-full">
-                    <div
-                      className={`w-2 h-2 rounded-full ${approval.status === "APPROVED" ? "bg-emerald-500" : "bg-red-500"}`}
-                    ></div>
-                  </div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {approval.status === "APPROVED" ? "Approved" : "Rejected"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {approval.approvedAt
-                      ? format(new Date(approval.approvedAt), "MMM d, h:mm a")
-                      : "Pending"}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    by {approval.approver.name}
-                  </p>
-                  {approval.comment && (
-                    <p className="text-xs bg-gray-50 p-2 mt-1 rounded border border-gray-100 text-gray-600 italic">
-                      &quot;{approval.comment}&quot;
-                    </p>
-                  )}
+              {/* Line Items Table (Simulated for this object structure) */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Items Requested
+                </h3>
+                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-slate-500 bg-slate-50 border-b border-slate-200 uppercase">
+                      <tr>
+                        <th className="px-4 py-3 font-medium">Item Name</th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          Qty
+                        </th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          Unit Price
+                        </th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          Total
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      <tr>
+                        <td className="px-4 py-4 font-medium text-slate-900">
+                          {pr.itemName || pr.title}
+                        </td>
+                        <td className="px-4 py-4 text-right text-slate-600">
+                          {pr.quantity || 1}
+                        </td>
+                        <td className="px-4 py-4 text-right text-slate-600">
+                          ₹
+                          {(pr.unitPrice || pr.estimatedCost).toLocaleString(
+                            "en-IN",
+                          )}
+                        </td>
+                        <td className="px-4 py-4 text-right font-bold text-slate-900 bg-emerald-50/30">
+                          ₹{pr.estimatedCost.toLocaleString("en-IN")}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot className="bg-slate-50 border-t border-slate-200">
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase"
+                        >
+                          Total Estimated Cost
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold text-emerald-700 text-lg">
+                          ₹{pr.estimatedCost.toLocaleString("en-IN")}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
-              ))}
+              </div>
 
-              {/* Pending State */}
-              {pr.status !== "APPROVED" && pr.status !== "REJECTED" && (
-                <div className="relative pl-6 opacity-50">
-                  <div className="absolute left-0 top-1 p-1 bg-white border border-gray-200 rounded-full">
-                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+              {/* Attachments */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <Paperclip className="w-3.5 h-3.5" /> Attachments
+                </h3>
+                {pr.attachments && pr.attachments.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {pr.attachments.map((file, i) => (
+                      <a
+                        key={i}
+                        href={file}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-500/50 hover:bg-emerald-50/10 hover:shadow-sm transition-all group"
+                      >
+                        <div className="bg-slate-100 p-2 rounded-lg group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-700 truncate group-hover:text-emerald-700">
+                            Attachment-{i + 1}
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            Click to view
+                          </p>
+                        </div>
+                        <Download className="w-4 h-4 text-slate-400 group-hover:text-emerald-500" />
+                      </a>
+                    ))}
                   </div>
-                  <p className="text-sm text-gray-500 italic">
-                    PENDING DECISION...
-                  </p>
-                </div>
-              )}
+                ) : (
+                  <div className="p-6 border border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-center gap-2 bg-slate-50/50">
+                    <Paperclip className="w-8 h-8 text-slate-300" />
+                    <p className="text-sm text-slate-500 font-medium">
+                      No documents attached
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Activity Timeline */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Activity Timeline
-            </h2>
-            <div className="max-h-[600px] overflow-y-auto">
+          {/* Timeline / Audit Logs */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="border-b border-slate-100 p-6 bg-slate-50/50">
+              <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+                <History className="w-4 h-4 text-blue-500" />
+                Audit Trail
+              </h2>
+            </div>
+            <div className="p-6 max-h-[500px] overflow-y-auto custom-scrollbar">
               <Timeline events={timeline} />
             </div>
           </div>
         </div>
+
+        {/* Right Column (Meta & Sidebar) */}
+        <div className="space-y-6">
+          {/* Status & Priority Card */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                Request Status
+              </h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="mb-1">{getStatusBadge(pr.status)}</div>
+                  {pr.priority && (
+                    <span
+                      className={cn(
+                        "text-[10px] font-bold px-2 py-0.5 rounded border ml-1",
+                        getPriorityColor(pr.priority),
+                      )}
+                    >
+                      {pr.priority} Priority
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-50 rounded-lg text-slate-500">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Department
+                  </p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {pr.department}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-50 rounded-lg text-slate-500">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Budget Category
+                  </p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {pr.budgetCategory || "Uncategorized"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-50 rounded-lg text-slate-500">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Required By
+                  </p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {pr.requiredBy
+                      ? format(new Date(pr.requiredBy), "PP")
+                      : "ASAP"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Preferred Vendor Card */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <h3 className="font-semibold text-slate-900 text-sm">
+                Preferred Vendor
+              </h3>
+            </div>
+            <div className="p-5">
+              {pr.preferredVendor ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg">
+                      {pr.preferredVendor.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-900">
+                        {pr.preferredVendor.name}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {pr.preferredVendor.vendorType}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                      <a
+                        href={`mailto:${pr.preferredVendor.email}`}
+                        className="hover:text-emerald-600 hover:underline"
+                      >
+                        {pr.preferredVendor.email}
+                      </a>
+                    </div>
+                    {pr.preferredVendor.phone && (
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{pr.preferredVendor.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                  <Link
+                    href={`/dashboard/vendors`}
+                    className="block text-center mt-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
+                  >
+                    View Vendor Profile
+                  </Link>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-sm text-slate-500 italic">
+                    No vendor specified
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Rejection Note (Conditional) */}
+          {pr.status === "REJECTED" && pr.rejectionReason && (
+            <div className="bg-rose-50 rounded-2xl border border-rose-100 p-5">
+              <h3 className="text-rose-800 font-bold text-sm mb-2 flex items-center gap-2">
+                <XCircle className="w-4 h-4" /> Rejection Reason
+              </h3>
+              <p className="text-sm text-rose-700 leading-relaxed">
+                {pr.rejectionReason}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Confirmation Dialogs */}
       <AlertDialog
         open={confirmState.isOpen}
         onOpenChange={(open) =>
-          setConfirmState((prev) => ({ ...prev, isOpen: open }))
+          !loading && setConfirmState((prev) => ({ ...prev, isOpen: open }))
         }
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="capitalize">
+            <AlertDialogTitle className="text-xl">
               {confirmState.action === "reject"
                 ? "Reject Purchase Request"
                 : `Confirm ${confirmState.action}`}
             </AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-slate-500">
               {confirmState.action === "reject" ? (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-4 pt-2">
                   <p>
                     Are you sure you want to reject this request? This action
                     cannot be undone. Please provide a reason below.
@@ -532,38 +694,41 @@ export default function PRDetailsView({
                   <textarea
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
-                    placeholder="Reason for rejection..."
-                    className="w-full min-h-[80px] p-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                    placeholder="E.g., Budget exceeded, item not necessary..."
+                    className="w-full min-h-[100px] p-3 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none"
                     autoFocus
                   />
                 </div>
               ) : (
-                `Are you sure you want to ${confirmState.action} this purchase request? This will move it to the next stage in the workflow.`
+                `Are you sure you want to proceed? This will move the request to the next stage in the workflow.`
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={loading} className="rounded-xl">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
-                e.preventDefault(); // Prevent auto-close
+                e.preventDefault();
                 handleExecuteAction();
               }}
               disabled={
                 loading ||
                 (confirmState.action === "reject" && !rejectReason.trim())
               }
-              className={
+              className={cn(
+                "rounded-xl",
                 confirmState.action === "reject"
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-600"
-                  : ""
-              }
+                  ? "bg-rose-600 hover:bg-rose-700 focus:ring-rose-600"
+                  : "bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-600",
+              )}
             >
               {loading
                 ? "Processing..."
                 : confirmState.action === "reject"
                   ? "Reject Request"
-                  : "Confirm"}
+                  : "Confirm Action"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
