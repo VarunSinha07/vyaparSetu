@@ -62,7 +62,7 @@ export default async function ReceiptPage(props: {
           <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
             <Receipt className="w-3.5 h-3.5 text-slate-500" />
             <span className="font-mono text-xs font-semibold text-slate-700 tracking-tight">
-              #{payment.razorpayPaymentId.slice(-8).toUpperCase()}
+              #{payment.razorpayPaymentId ? payment.razorpayPaymentId.slice(-8).toUpperCase() : payment.id.slice(-8).toUpperCase()}
             </span>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default async function ReceiptPage(props: {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-500">Transaction ID</span>
                   <span className="font-mono font-medium text-slate-900 select-all">
-                    {payment.razorpayPaymentId}
+                    {payment.razorpayPaymentId || payment.id}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -190,7 +190,7 @@ export default async function ReceiptPage(props: {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-500">Date & Time</span>
                   <span className="font-medium text-slate-900">
-                    {format(new Date(payment.paidAt), "PPP p")}
+                    {payment.paidAt ? format(new Date(payment.paidAt), "PPP p") : format(new Date(payment.createdAt), "PPP p")}
                   </span>
                 </div>
 
