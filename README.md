@@ -1,250 +1,133 @@
-VyaparFlow
+# ⚡ VyaparFlow
 
-A Multi-Tenant Vendor & Procurement Management Platform for Indian MSMEs
+> **A Modern B2B Procurement & Vendor Payment SaaS Platform for Indian MSMEs**
 
-VyaparFlow is a web-based SaaS application built to help Indian MSMEs manage their procurement and vendor payment workflows in a structured and reliable way.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
+[![Razorpay](https://img.shields.io/badge/Razorpay-Integrated-02042B?style=for-the-badge&logo=razorpay)](https://razorpay.com/)
 
-In many small and mid-sized Indian companies, procurement is still handled using Excel sheets, WhatsApp messages, emails, and manual follow-ups. This leads to poor visibility, delayed approvals, payment issues, and missing audit trails. VyaparFlow aims to replace these fragmented processes with a single, role-based system that covers the entire procurement lifecycle.
+---
 
-Problem Statement
+## 📌 Overview
 
-In typical Indian MSMEs:
+**VyaparFlow** is an end-to-end, multi-tenant B2B SaaS platform designed to transform how **Indian MSMEs (Micro, Small, and Medium Enterprises)** manage vendor procurement, invoice verification, and payout processing.
 
-Purchase requests are raised informally
+In traditional Indian business setups, procurement relies heavily on informal WhatsApp messages, emails, manual spreadsheets, and phone calls. This results in **untracked expenses, delayed manager approvals, invoice mismatches, GST compliance risks, and zero auditability**.
 
-Approvals happen over WhatsApp or email
+VyaparFlow replaces fragmented manual communication with a unified, role-governed workflow that brings structure, transparency, and financial accountability to every step of the procurement cycle.
 
-Vendor details are stored in spreadsheets
+---
 
-Invoice verification is manual
+## 💡 Problem vs. Solution
 
-Payments are tracked separately from approvals
+| Traditional Procurement Chaos | The VyaparFlow Advantage |
+| :--- | :--- |
+| 📲 Informal requests via WhatsApp & verbal calls | 📝 Centralized **Purchase Requests (PR)** with priority & itemized costs |
+| 🤷 Unclear approval chains & missing records | 👔 Single-click **Manager Approvals** with recorded comments |
+| 📑 POs created manually or skipped entirely | 📜 Auto-generated, immutable **Purchase Orders (POs)** |
+| ⚠️ Manual invoice checks & tax oversight | 🔍 Structured **Invoice Verification** checking CGST, SGST, IGST tax splits |
+| 🏦 Manual bank transfers decoupled from approvals | 💳 Webhook-verified **Razorpay Payments** linked directly to invoices |
+| ❌ Missing audit trails during GST filings | 🛡️ Read-only **Audit Logs** tracking every financial state change |
 
-These practices often result in delays, payment disputes, GST compliance risks, and lack of accountability.
+---
 
-VyaparFlow addresses these issues by providing a centralized procurement system designed around how Indian MSMEs actually operate.
+## 🔄 The Complete Procurement Lifecycle
 
-What VyaparFlow Does
+```mermaid
+flowchart LR
+    A[🏢 Create Company & Invite Team] --> B[📋 Add Vendors]
+    B --> C[📝 Raise Purchase Request]
+    C --> D{👔 Manager Review}
+    D -- Rejected --> C
+    D -- Approved --> E[📜 Issue Purchase Order]
+    E --> F[📄 Upload Vendor Invoice]
+    F --> G{🔍 Finance Verification}
+    G -- Mismatch / Rejected --> F
+    G -- Verified --> H[💳 Razorpay Payout]
+    H --> I[⚡ Webhook Confirms Paid]
+    I --> J[📄 Auto PDF Receipt & Audit Log]
+```
 
-VyaparFlow digitizes the complete procurement lifecycle in one platform:
+---
 
-Purchase Request → Approval → Purchase Order → Invoice → Payment
+## 🌟 Key Features
 
-Each step is company-scoped, role-based, and auditable, ensuring clarity and control throughout the process.
+### 🏢 Multi-Tenant Workspace & Company Management
+- Each company operates within a completely isolated workspace.
+- Admins can onboard their business, configure vendor catalogs, and invite team members via secure email invitations.
 
-User Roles
+### 📝 Purchase Request (PR) Engine
+- Procurement officers or admins can raise detailed purchase requests with department tags, itemized costs, priority levels (`NORMAL` / `URGENT`), and budget categories (`CAPEX` / `OPEX`).
 
-Each company using VyaparFlow has internal users with defined roles:
+### 👔 Streamlined Approval Workflow
+- Dedicated review queues for Managers and Admins.
+- Approvers can accept or reject PRs with detailed feedback notes, maintaining complete transparency before funds are committed.
 
-Admin – Company owner or system administrator
+### 📜 Immutable Purchase Orders (PO)
+- Once a PR is approved, an official Purchase Order is generated and locked against editing to prevent unauthorized order alterations.
 
-Procurement – Raises purchase requests and manages vendors
+### 🔍 3-Way Invoice & Tax Verification
+- Invoices are uploaded directly against issued POs.
+- Finance teams verify vendor invoice numbers, dates, subtotal amounts, and GST splits (CGST, SGST, IGST) to ensure tax compliance before payment release.
 
-Manager – Reviews and approves purchase requests
+### 💳 Webhook-Secured Razorpay Payments
+- Integrated directly with Razorpay Checkout for seamless payment execution.
+- Payment status transitions to `PAID` exclusively via signed Razorpay Webhooks—preventing client-side tampering or fraudulent confirmations.
 
-Finance – Verifies invoices and initiates vendor payments
+### 📑 Automated PDF Payment Receipts
+- Instant generation of downloadable, professional PDF payment receipts powered by `@react-pdf/renderer`.
 
-Vendors do not log in to the system. They are managed as external entities, which keeps the workflow simple and aligned with real-world practices.
+### 🛡️ Enterprise Audit Logging & RBAC
+- Immutable, read-only audit log tracking every action (PR approval, PO issuance, invoice verification, payment).
+- Role-Based Access Control (RBAC) ensures users only access actions permitted for their role (`ADMIN`, `PROCUREMENT`, `MANAGER`, `FINANCE`).
 
-High-Level System Architecture
+---
 
-Frontend: Web-based dashboard for internal users
+## 👥 Role-Based User Workspace
 
-Backend: REST APIs handling business logic and RBAC
+VyaparFlow is built around real-world team hierarchies:
 
-Database: Centralized relational database with strict tenant isolation
+- **🛡️ Admin**: Workspace setup, team invitations, global analytics, and access to audit logs.
+- **📦 Procurement**: Vendor onboarding, raising purchase requests, issuing purchase orders.
+- **👔 Manager**: Reviewing pending PRs, approving/rejecting requests with audit comments.
+- **💳 Finance**: Verifying uploaded vendor invoices, checking GST breakdowns, initiating Razorpay payments, downloading receipts.
 
-External services:
+> **Supplier Simplicity**: Vendors are treated as external entities (tracked via GSTIN, PAN, and Bank details). They do not need to register or log in, eliminating supplier friction.
 
-Razorpay for payments
+---
 
-Email service for user invitations and notifications
+## 🛠️ Tech Stack & Architecture
 
-Each company’s data is isolated using a companyId, ensuring multi-tenant safety.
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4
+- **UI & Analytics**: Radix UI Primitives, Lucide Icons, Recharts, Sonner Toasts
+- **Database & ORM**: PostgreSQL, Prisma ORM 7 (`@prisma/adapter-pg`)
+- **Authentication**: Better Auth (Multi-tenant session & workspace management)
+- **Payment Processing**: Razorpay SDK + Webhook Verification
+- **Document & Email**: `@react-pdf/renderer`, Nodemailer
+- **AI Services**: Google Generative AI (`@google/generative-ai`)
 
-Authentication and Security
+---
 
-Authentication is handled using Better Auth
+## 💡 Engineering Highlights
 
-Authorization is enforced at the API level using role-based access control
+- **Strict Tenant Isolation**: All queries and operations are scoped by `companyId` at the database level to guarantee zero cross-tenant data leaks.
+- **Webhook Source of Truth**: Financial status is never trusted from the client browser—only cryptographic server webhooks confirm payment success.
+- **GST & Audit Ready**: Built keeping Indian tax compliance, vendor GSTIN tracking, and payment aging in mind.
 
-Each user belongs to exactly one company
+---
 
-Every database query is scoped to the user’s company
+## 👤 Author
 
-Payment status is confirmed only via Razorpay webhooks, not frontend callbacks
+**Varun Sinha**  
+*Full Stack Developer*  
+- GitHub: [@VarunSinha07](https://github.com/VarunSinha07)
 
-Core Modules
-Company and User Management
+---
 
-Users sign up and create a company workspace
+## 📄 License
 
-Admins invite employees via email
-
-Roles determine what actions each user can perform
-
-Vendor Management
-
-Companies can add and manage external vendors
-
-Vendor details include GSTIN, PAN, and bank information
-
-Only authorized roles can add or edit vendors
-
-Purchase Requests (PR)
-
-Raised by Procurement or Admin users
-
-Includes purchase justification, department, estimated amount, and priority
-
-PR lifecycle:
-
-DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED / REJECTED
-
-Approval Workflow
-
-Single-level approval by Manager or Admin
-
-Approval or rejection includes comments
-
-All actions are recorded for audit purposes
-
-Purchase Orders (PO)
-
-Created only after a PR is approved
-
-One PO per PR
-
-PO lifecycle:
-
-DRAFT → ISSUED → CANCELLED
-
-Issued POs are locked and cannot be edited
-
-Invoice Upload and Verification
-
-Invoices are uploaded against issued POs
-
-Invoice numbers are entered exactly as provided by vendors
-
-Finance verifies invoice amounts and GST breakup
-
-Invoice lifecycle:
-
-UPLOADED → VERIFIED / REJECTED / MISMATCH
-
-Vendor Payments
-
-Only Finance users can initiate payments
-
-Payments are made using Razorpay
-
-Razorpay webhooks are used as the source of truth
-
-Invoices are marked as PAID only after webhook confirmation
-
-Dashboard and Reports
-
-Dashboard overview is role-aware
-
-Managers see approval-related metrics
-
-Procurement sees execution status
-
-Finance sees payment readiness
-
-Admins get overall visibility
-
-Reports include vendor-wise spend and payment aging
-
-Audit Logs
-
-Tracks all important actions such as:
-
-PR approvals
-
-PO issuance
-
-Invoice verification
-
-Payments
-
-Audit logs are read-only and accessible to Admins
-
-End-to-End Workflow
-Create Company
-→ Invite Users
-→ Add Vendor
-→ Create Purchase Request
-→ Approve Request
-→ Create Purchase Order
-→ Upload Invoice
-→ Verify Invoice
-→ Pay Vendor
-
-Tech Stack
-
-Frontend
-
-Next.js
-Tailwind CSS
-
-Backend
-
-Node.js / Express
-Prisma ORM
-
-Database
-PostgreSQL
-
-Authentication
-Better Auth
-
-Payments
-Razorpay (Checkout and Webhooks)
-
-Email
-Nodemailer
-
-Key Design Decisions
-
-Vendors do not log in to keep workflows simple
-
-Invoice numbers are vendor-provided for GST and audit compliance
-
-Payments are confirmed only via Razorpay webhooks
-
-Single-level approval reflects Indian MSME reality
-
-Strict tenant isolation prevents cross-company data access
-
-Future Enhancements
-
-Vendor read-only dashboard
-
-Multi-level approval workflows
-
-Invoice OCR
-
-Inventory tracking
-
-Accounting software integrations
-
-Why This Project Matters
-
-VyaparFlow is not just a CRUD application. It demonstrates:
-
-Real-world problem solving
-
-End-to-end system design
-
-Secure payment handling
-
-Role-based workflows
-
-Audit and compliance awareness
-
-Author
-
-Varun Sinha
-Full Stack Developer
+This project is licensed under the MIT License.

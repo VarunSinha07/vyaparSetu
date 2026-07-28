@@ -33,6 +33,7 @@ export async function GET(
         take: 1,
       },
       vendor: true,
+      company: true,
     },
   });
 
@@ -51,6 +52,8 @@ export async function GET(
       vendorName: invoice.vendor.name,
       vendorEmail: invoice.vendor.email || "",
       vendorGst: invoice.vendor.gstin || undefined,
+      companyName: invoice.company.name,
+      companyEmail: invoice.company.email || undefined,
     });
 
     const { searchParams } = new URL(req.url);

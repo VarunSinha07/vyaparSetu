@@ -23,154 +23,155 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
     backgroundColor: "#ffffff",
+    padding: 0, // Reset padding
     fontSize: 10,
-    color: "#374151",
-    flexDirection: "column",
+    color: "#334155", // slate-700
   },
-  headerContainer: {
+  // Replicating web 'bg-slate-50'
+  bodyWrapper: {
+    padding: 30,
+    backgroundColor: "#f8fafc", // slate-50
+    flexGrow: 1,
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#e2e8f0", // slate-200
+  },
+  // Replicating 'bg-emerald-50/50 border-b border-emerald-100/50 p-4 flex justify-between'
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 40,
-    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#ecfdf5", // emerald-50
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#d1fae5", // emerald-100
   },
-  logo: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#4f46e5",
-    letterSpacing: -1,
-  },
-  logoSub: {
-    fontSize: 9,
-    color: "#64748b",
-    marginTop: 4,
-  },
-  receiptBadge: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#cbd5e1",
-    letterSpacing: 4,
-    textTransform: "uppercase",
-  },
-  contentContainer: {
-    padding: 40,
-  },
-  statusRow: {
+  successBadge: {
     flexDirection: "row",
-    marginBottom: 30,
+    alignItems: "center",
+    gap: 4,
   },
-  statusBadge: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: "#dcfce7",
-    borderRadius: 4,
-  },
-  statusText: {
-    color: "#166534",
-    fontSize: 10,
+  successText: {
+    color: "#047857", // emerald-700
+    fontSize: 11,
     fontWeight: "bold",
     textTransform: "uppercase",
+  },
+  poweredBy: {
+    fontSize: 9,
+    color: "#94a3b8", // slate-400
+  },
+  poweredByCompany: {
+    fontWeight: "bold",
+    color: "#475569", // slate-600
+  },
+  content: {
+    padding: 30,
+  },
+  // Main Amount Header
+  amountSection: {
+    marginBottom: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0", // slate-200
+    borderStyle: "dashed",
+    paddingBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  amountLabel: {
+    fontSize: 10,
+    color: "#64748b", // slate-500
+    marginBottom: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  amountValue: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#0f172a", // slate-900
+  },
+  dateSection: {
+    alignItems: "flex-end",
+  },
+  dateLabel: {
+    fontSize: 9,
+    color: "#64748b", // slate-500
+    marginBottom: 4,
+  },
+  dateValue: {
+    fontSize: 10,
+    color: "#334155", // slate-700
+    fontWeight: "bold",
   },
   grid: {
     flexDirection: "row",
-    marginBottom: 40,
+    marginBottom: 30,
     gap: 40,
   },
   col: {
     flex: 1,
   },
-  label: {
-    color: "#94a3b8",
+  sectionTitle: {
     fontSize: 9,
+    fontWeight: "bold",
+    color: "#94a3b8", // slate-400
     textTransform: "uppercase",
-    marginBottom: 4,
+    marginBottom: 8,
     letterSpacing: 0.5,
   },
-  value: {
-    fontSize: 11,
-    color: "#1e293b",
-    marginBottom: 12,
+  partyName: {
+    fontSize: 12, // text-lg
+    fontWeight: "bold",
+    color: "#0f172a", // slate-900
+    marginBottom: 4,
+  },
+  partyDetail: {
+    fontSize: 10,
+    color: "#475569", // slate-600
+    marginBottom: 2,
     lineHeight: 1.4,
   },
-  valueBold: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#0f172a",
-    marginBottom: 2,
-  },
-  table: {
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#f1f5f9",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
-  },
-  tableHeaderCell: {
-    color: "#475569",
-    fontSize: 9,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-  },
-  tableRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-  },
-  tableCell: {
-    fontSize: 10,
-    color: "#334155",
-  },
-  totalContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 10,
-  },
-  totalBox: {
-    width: 200,
-    backgroundColor: "#f8fafc",
+  detailsTable: {
+    backgroundColor: "#f8fafc", // slate-50
+    borderRadius: 6,
     padding: 16,
-    borderRadius: 8,
-    alignItems: "flex-end",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#e2e8f0", // slate-200
   },
-  totalLabel: {
-    color: "#64748b",
-    fontSize: 9,
-    marginBottom: 4,
-    textTransform: "uppercase",
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0", // slate-200
   },
-  totalAmount: {
-    fontSize: 18,
+  detailLabel: {
+    color: "#64748b", // slate-500
+    fontSize: 10,
+  },
+  detailValue: {
+    color: "#1e293b", // slate-800
+    fontSize: 10,
     fontWeight: "bold",
-    color: "#4f46e5",
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 40,
-    borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    marginTop: 20,
+    alignItems: "center",
   },
   footerText: {
-    color: "#94a3b8",
     fontSize: 8,
+    color: "#94a3b8", // slate-400
     textAlign: "center",
     lineHeight: 1.5,
   },
 });
 
-interface ReceiptData {
+export interface ReceiptData {
   paymentId: string;
   paymentDate: Date;
   invoiceNumber: string;
@@ -179,140 +180,104 @@ interface ReceiptData {
   vendorEmail: string;
   vendorGst?: string;
   companyName?: string;
+  companyEmail?: string;
 }
 
 const ReceiptDocument = ({ data }: { data: ReceiptData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View>
-          <Text style={styles.logo}>VyaparFlow</Text>
-          <Text style={styles.logoSub}>Finance Automation Platform</Text>
-        </View>
-        <View style={{ justifyContent: "center" }}>
-          <Text style={styles.receiptBadge}>RECEIPT</Text>
-        </View>
-      </View>
-
-      <View style={styles.contentContainer}>
-        {/* Status */}
-        <View style={styles.statusRow}>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Payment Successful</Text>
-          </View>
-        </View>
-
-        {/* Info Grid */}
-        <View style={styles.grid}>
-          {/* Bill To */}
-          <View style={styles.col}>
-            <Text style={styles.label}>Paid To</Text>
-            <Text style={styles.valueBold}>{data.vendorName}</Text>
-            <Text style={styles.value}>{data.vendorEmail}</Text>
-            {data.vendorGst && (
-              <Text style={styles.value}>GSTIN: {data.vendorGst}</Text>
-            )}
+      <View style={styles.bodyWrapper}>
+        {/* Card Wrapper */}
+        <View style={styles.card}>
+          {/* Header (Emerald) */}
+          <View style={styles.header}>
+            <View style={styles.successBadge}>
+              <Text style={styles.successText}>✓ Payment Successful</Text>
+            </View>
+            <View>
+              <Text style={styles.poweredBy}>
+                Powered by{" "}
+                <Text style={styles.poweredByCompany}>VyaparFlow</Text>
+              </Text>
+            </View>
           </View>
 
-          {/* Payment Details */}
-          <View style={styles.col}>
-            <Text style={styles.label}>Transaction Details</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "80%",
-              }}
-            >
+          {/* Content */}
+          <View style={styles.content}>
+            {/* Main Amount Header */}
+            <View style={styles.amountSection}>
               <View>
-                <Text
-                  style={{ ...styles.value, color: "#64748b", fontSize: 9 }}
-                >
-                  Date Paid
-                </Text>
-                <Text style={{ ...styles.value, marginBottom: 8 }}>
-                  {format(data.paymentDate, "dd MMM yyyy")}
-                </Text>
-
-                <Text
-                  style={{ ...styles.value, color: "#64748b", fontSize: 9 }}
-                >
-                  Invoice Ref
-                </Text>
-                <Text style={{ ...styles.value, marginBottom: 8 }}>
-                  #{data.invoiceNumber}
+                <Text style={styles.amountLabel}>Total Paid</Text>
+                <Text style={styles.amountValue}>
+                  {formatCurrency(data.amount)}
                 </Text>
               </View>
-              <View>
-                <Text
-                  style={{ ...styles.value, color: "#64748b", fontSize: 9 }}
-                >
-                  Transaction ID
+              <View style={styles.dateSection}>
+                <Text style={styles.dateLabel}>Payment Date</Text>
+                <Text style={styles.dateValue}>
+                  {format(new Date(data.paymentDate), "MMMM d, yyyy")}
                 </Text>
-                <Text
-                  style={{
-                    ...styles.value,
-                    fontFamily: "Helvetica",
-                    fontSize: 9,
-                  }}
-                >
-                  {data.paymentId}
+              </View>
+            </View>
+
+            {/* Two Columns: From -> To (Company -> Vendor) */}
+            <View style={styles.grid}>
+              {/* Left Column: From (Company/Payer) */}
+              <View style={styles.col}>
+                <Text style={styles.sectionTitle}>Paid By</Text>
+                <Text style={styles.partyName}>
+                  {data.companyName || "Unknown Company"}
+                </Text>
+                {data.companyEmail && (
+                  <Text style={styles.partyDetail}>{data.companyEmail}</Text>
+                )}
+              </View>
+
+              {/* Right Column: To (Vendor/Payee) */}
+              <View style={styles.col}>
+                <Text style={styles.sectionTitle}>Paid To</Text>
+                <Text style={styles.partyName}>{data.vendorName}</Text>
+                <Text style={styles.partyDetail}>{data.vendorEmail}</Text>
+                {data.vendorGst && (
+                  <Text style={styles.partyDetail}>
+                    GSTIN: {data.vendorGst}
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {/* Transaction Details Table */}
+            <View style={styles.detailsTable}>
+              <View style={[styles.detailRow, { borderTopWidth: 0 }]}>
+                <Text style={styles.detailLabel}>Reference ID</Text>
+                <Text style={styles.detailValue}>{data.paymentId}</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Invoice Number</Text>
+                <Text style={styles.detailValue}>#{data.invoiceNumber}</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Payment Method</Text>
+                <Text style={styles.detailValue}>Online Transfer</Text>
+              </View>
+              <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
+                <Text style={styles.detailLabel}>Transaction Status</Text>
+                <Text style={[styles.detailValue, { color: "#059669" }]}>
+                  Completed
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Line Items Table */}
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderCell, { flex: 2 }]}>
-              Description
-            </Text>
-            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Reference</Text>
-            <Text
-              style={[styles.tableHeaderCell, { flex: 1, textAlign: "right" }]}
-            >
-              Amount
-            </Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, { flex: 2 }]}>
-              Payment for Invoice #{data.invoiceNumber}
-            </Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>
-              {data.invoiceNumber}
-            </Text>
-            <Text
-              style={[
-                styles.tableCell,
-                { flex: 1, textAlign: "right", fontWeight: "bold" },
-              ]}
-            >
-              {formatCurrency(data.amount)}
-            </Text>
-          </View>
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            This receipt is electronically generated and is valid without a
+            signature.{"\n"}
+            Generated on {format(new Date(), "PPP")} via VyaparFlow Platform.
+          </Text>
         </View>
-
-        {/* Total Box */}
-        <View style={styles.totalContainer}>
-          <View style={styles.totalBox}>
-            <Text style={styles.totalLabel}>Total Paid</Text>
-            <Text style={styles.totalAmount}>
-              {formatCurrency(data.amount)}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          This receipt is electronically generated and is valid without a
-          signature.{"\n"}
-          Generated on {format(new Date(), "PPP")} via VyaparFlow Platform.
-        </Text>
       </View>
     </Page>
   </Document>
@@ -320,5 +285,6 @@ const ReceiptDocument = ({ data }: { data: ReceiptData }) => (
 
 export async function generateReceiptPDF(data: ReceiptData): Promise<Buffer> {
   const stream = await renderToBuffer(<ReceiptDocument data={data} />);
+  // @ts-ignore
   return stream;
 }

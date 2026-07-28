@@ -13,18 +13,10 @@ import {
   ArrowLeft,
   Filter,
   Activity,
-  User,
   Clock,
-  LayoutGrid,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 
 export default async function AuditLogsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
