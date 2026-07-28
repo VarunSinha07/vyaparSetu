@@ -1,4 +1,4 @@
-# ⚡ VyaparFlow
+# VyaparFlow
 
 > **A Modern B2B Procurement & Vendor Payment SaaS Platform for Indian MSMEs**
 
@@ -12,95 +12,97 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 **VyaparFlow** is an end-to-end, multi-tenant B2B SaaS platform designed to transform how **Indian MSMEs (Micro, Small, and Medium Enterprises)** manage vendor procurement, invoice verification, and payout processing.
 
-In traditional Indian business setups, procurement relies heavily on informal WhatsApp messages, emails, manual spreadsheets, and phone calls. This results in **untracked expenses, delayed manager approvals, invoice mismatches, GST compliance risks, and zero auditability**.
+In traditional Indian business setups, procurement relies heavily on informal WhatsApp messages, emails, spreadsheets, and phone calls. This results in untracked expenses, delayed manager approvals, invoice mismatches, GST compliance risks, and lack of audit trails.
 
 VyaparFlow replaces fragmented manual communication with a unified, role-governed workflow that brings structure, transparency, and financial accountability to every step of the procurement cycle.
 
 ---
 
-## 💡 Problem vs. Solution
+## Problem vs. Solution
 
 | Traditional Procurement Chaos | The VyaparFlow Advantage |
 | :--- | :--- |
-| 📲 Informal requests via WhatsApp & verbal calls | 📝 Centralized **Purchase Requests (PR)** with priority & itemized costs |
-| 🤷 Unclear approval chains & missing records | 👔 Single-click **Manager Approvals** with recorded comments |
-| 📑 POs created manually or skipped entirely | 📜 Auto-generated, immutable **Purchase Orders (POs)** |
-| ⚠️ Manual invoice checks & tax oversight | 🔍 Structured **Invoice Verification** checking CGST, SGST, IGST tax splits |
-| 🏦 Manual bank transfers decoupled from approvals | 💳 Webhook-verified **Razorpay Payments** linked directly to invoices |
-| ❌ Missing audit trails during GST filings | 🛡️ Read-only **Audit Logs** tracking every financial state change |
+| Informal requests via WhatsApp & verbal calls | Centralized **Purchase Requests (PR)** with priority & itemized costs |
+| Unclear approval chains & missing records | Single-click **Manager Approvals** with recorded comments |
+| POs created manually or skipped entirely | Auto-generated, immutable **Purchase Orders (POs)** |
+| Manual invoice checks & tax oversight | Structured **Invoice Verification** checking CGST, SGST, IGST tax splits |
+| Manual bank transfers decoupled from approvals | Webhook-verified **Razorpay Payments** linked directly to invoices |
+| Missing audit trails during GST filings | Read-only **Audit Logs** tracking every financial state change |
 
 ---
 
-## 🔄 The Complete Procurement Lifecycle
+## Procurement Lifecycle
 
 ```mermaid
-flowchart LR
-    A[🏢 Create Company & Invite Team] --> B[📋 Add Vendors]
-    B --> C[📝 Raise Purchase Request]
-    C --> D{👔 Manager Review}
-    D -- Rejected --> C
-    D -- Approved --> E[📜 Issue Purchase Order]
-    E --> F[📄 Upload Vendor Invoice]
-    F --> G{🔍 Finance Verification}
-    G -- Mismatch / Rejected --> F
-    G -- Verified --> H[💳 Razorpay Payout]
-    H --> I[⚡ Webhook Confirms Paid]
-    I --> J[📄 Auto PDF Receipt & Audit Log]
+graph TD
+    A["1. Workspace & Onboarding"] -->|Create Company & Register Vendors| B["2. Purchase Request (PR)"]
+    B -->|Submit Itemized Request| C{"3. Manager Review"}
+    
+    C -- Approved --> D["4. Issue Purchase Order (PO)"]
+    C -- Rejected --> B
+    
+    D -->|Vendor Delivers Order| E["5. Upload Vendor Invoice"]
+    E -->|Verify GST Breakup & Subtotal| F{"6. Finance Verification"}
+    
+    F -- Verified --> G["7. Initiate Razorpay Payment"]
+    F -- Mismatch / Rejected --> E
+    
+    G -->|Webhook Confirmation| H["8. PDF Receipt & Immutable Audit Log"]
 ```
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-### 🏢 Multi-Tenant Workspace & Company Management
-- Each company operates within a completely isolated workspace.
+### Multi-Tenant Workspace & Company Management
+- Each company operates within a completely isolated workspace scoped by `companyId`.
 - Admins can onboard their business, configure vendor catalogs, and invite team members via secure email invitations.
 
-### 📝 Purchase Request (PR) Engine
+### Purchase Request (PR) Engine
 - Procurement officers or admins can raise detailed purchase requests with department tags, itemized costs, priority levels (`NORMAL` / `URGENT`), and budget categories (`CAPEX` / `OPEX`).
 
-### 👔 Streamlined Approval Workflow
+### Streamlined Approval Workflow
 - Dedicated review queues for Managers and Admins.
-- Approvers can accept or reject PRs with detailed feedback notes, maintaining complete transparency before funds are committed.
+- Approvers can accept or reject PRs with detailed feedback notes, maintaining transparency before funds are committed.
 
-### 📜 Immutable Purchase Orders (PO)
+### Immutable Purchase Orders (PO)
 - Once a PR is approved, an official Purchase Order is generated and locked against editing to prevent unauthorized order alterations.
 
-### 🔍 3-Way Invoice & Tax Verification
+### 3-Way Invoice & Tax Verification
 - Invoices are uploaded directly against issued POs.
 - Finance teams verify vendor invoice numbers, dates, subtotal amounts, and GST splits (CGST, SGST, IGST) to ensure tax compliance before payment release.
 
-### 💳 Webhook-Secured Razorpay Payments
+### Webhook-Secured Razorpay Payments
 - Integrated directly with Razorpay Checkout for seamless payment execution.
 - Payment status transitions to `PAID` exclusively via signed Razorpay Webhooks—preventing client-side tampering or fraudulent confirmations.
 
-### 📑 Automated PDF Payment Receipts
+### Automated PDF Payment Receipts
 - Instant generation of downloadable, professional PDF payment receipts powered by `@react-pdf/renderer`.
 
-### 🛡️ Enterprise Audit Logging & RBAC
+### Enterprise Audit Logging & RBAC
 - Immutable, read-only audit log tracking every action (PR approval, PO issuance, invoice verification, payment).
 - Role-Based Access Control (RBAC) ensures users only access actions permitted for their role (`ADMIN`, `PROCUREMENT`, `MANAGER`, `FINANCE`).
 
 ---
 
-## 👥 Role-Based User Workspace
+## Role-Based User Workspace
 
 VyaparFlow is built around real-world team hierarchies:
 
-- **🛡️ Admin**: Workspace setup, team invitations, global analytics, and access to audit logs.
-- **📦 Procurement**: Vendor onboarding, raising purchase requests, issuing purchase orders.
-- **👔 Manager**: Reviewing pending PRs, approving/rejecting requests with audit comments.
-- **💳 Finance**: Verifying uploaded vendor invoices, checking GST breakdowns, initiating Razorpay payments, downloading receipts.
+- **Admin**: Workspace setup, team invitations, global analytics, and access to audit logs.
+- **Procurement**: Vendor onboarding, raising purchase requests, issuing purchase orders.
+- **Manager**: Reviewing pending PRs, approving or rejecting requests with audit comments.
+- **Finance**: Verifying uploaded vendor invoices, checking GST breakdowns, initiating Razorpay payments, downloading receipts.
 
-> **Supplier Simplicity**: Vendors are treated as external entities (tracked via GSTIN, PAN, and Bank details). They do not need to register or log in, eliminating supplier friction.
+> **Supplier Simplicity**: Vendors are treated as external entities (tracked via GSTIN, PAN, and Bank details). They do not need to register or log in, eliminating supplier onboarding friction.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Tech Stack & Architecture
 
 - **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4
 - **UI & Analytics**: Radix UI Primitives, Lucide Icons, Recharts, Sonner Toasts
@@ -112,15 +114,15 @@ VyaparFlow is built around real-world team hierarchies:
 
 ---
 
-## 💡 Engineering Highlights
+## Engineering Highlights
 
 - **Strict Tenant Isolation**: All queries and operations are scoped by `companyId` at the database level to guarantee zero cross-tenant data leaks.
-- **Webhook Source of Truth**: Financial status is never trusted from the client browser—only cryptographic server webhooks confirm payment success.
+- **Webhook Source of Truth**: Financial status is never trusted from client browser callbacks—only cryptographic server webhooks confirm payment success.
 - **GST & Audit Ready**: Built keeping Indian tax compliance, vendor GSTIN tracking, and payment aging in mind.
 
 ---
 
-## 👤 Author
+## Author
 
 **Varun Sinha**  
 *Full Stack Developer*  
@@ -128,6 +130,6 @@ VyaparFlow is built around real-world team hierarchies:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
