@@ -4,7 +4,7 @@ import { useState } from "react";
 import { authClient } from "../../../lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, Loader2, ArrowRight, Building2 } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, Building2, ShieldCheck, CheckCircle2, Sparkles } from "lucide-react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -40,170 +40,153 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-emerald-950 overflow-hidden font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none" />
-
-      <div className="w-full max-w-md p-4 relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 group mb-6">
-            <div className="bg-gradient-to-br from-emerald-400 to-teal-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-300">
-              <Building2 className="w-6 h-6 text-emerald-950" />
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500/20 selection:text-emerald-900 grid lg:grid-cols-12 overflow-hidden">
+      {/* Left Column: Vibrant Emerald Hero Panel */}
+      <div className="hidden lg:flex lg:col-span-6 bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
+        <div className="relative z-10">
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="bg-white/10 backdrop-blur-md p-2.5 rounded-xl border border-white/20 shadow-md">
+              <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white tracking-tight">
-              VyaparFlow
-            </span>
+            <span className="text-2xl font-extrabold text-white tracking-tight">VyaparFlow</span>
           </Link>
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
-          <p className="text-emerald-200/60 text-sm">
-            Sign in to your dashboard to continue
-          </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/20">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-sm flex items-center gap-2 animate-in fade-in">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-emerald-100/80 ml-1"
-              >
-                Email address
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-emerald-200/50 group-focus-within:text-emerald-400 transition-colors" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-xl border border-white/10 bg-white/5 py-3.5 pl-11 pr-4 text-white placeholder:text-emerald-200/20 focus:border-emerald-400/50 focus:bg-white/10 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all duration-200"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-emerald-100/80 ml-1"
-                >
-                  Password
-                </label>
-                <Link
-                  href="/reset-password"
-                  className="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-emerald-200/50 group-focus-within:text-emerald-400 transition-colors" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="block w-full rounded-xl border border-white/10 bg-white/5 py-3.5 pl-11 pr-4 text-white placeholder:text-emerald-200/20 focus:border-emerald-400/50 focus:bg-white/10 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all duration-200"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-emerald-950 font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-emerald-500/20 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed group"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Signing in...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-transparent text-emerald-200/50">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={async () => {
-                await authClient.signIn.social({
-                  provider: "google",
-                  callbackURL: "/dashboard",
-                });
-              }}
-              className="mt-4 w-full flex items-center justify-center gap-3 bg-white text-slate-900 hover:bg-gray-50 font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
-              </svg>
-              Google
-            </button>
+        <div className="relative z-10 space-y-8 max-w-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
+            <span>Procurement & Spend Operating System</span>
           </div>
 
-          <div className="mt-8 text-center">
-            <p className="text-sm text-emerald-200/50">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/sign-up"
-                className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
-              >
-                Create one now
-              </Link>
+          <h1 className="text-3xl lg:text-4xl font-extrabold leading-tight">
+            Streamline company spend with total audit visibility.
+          </h1>
+
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 space-y-3 shadow-sm">
+            <p className="text-xs text-emerald-50 italic leading-relaxed font-medium">
+              &quot;VyaparFlow cut our 3-way invoice matching cycle from 5 days down to under 15 minutes. The GST verification alone saved us lakhs in missing ITC claims.&quot;
             </p>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-white/10">
+              <span className="font-bold text-white">VP Operations</span>
+              <span className="text-emerald-200 font-semibold">Indian Manufacturing Enterprise</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 pt-2 text-xs text-emerald-100 font-semibold">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-200" />
+              <span>SOC-2 Ready</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+              <span>256-bit SSL</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+              <span>GST API Sync</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 text-xs text-emerald-100/80 font-medium">
+          © {new Date().getFullYear()} VyaparFlow Technologies Inc. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right Column: Sign In Form */}
+      <div className="lg:col-span-6 flex items-center justify-center p-6 sm:p-12 relative">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center lg:text-left space-y-1">
+            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome back</h2>
+            <p className="text-slate-500 text-xs font-normal">Enter your credentials to access your dashboard</p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {error && (
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-rose-600 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="text-xs font-bold text-slate-700">
+                  Work Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white outline-none transition-colors"
+                    placeholder="name@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="password" className="text-xs font-bold text-slate-700">
+                    Password
+                  </label>
+                  <Link
+                    href="/reset-password"
+                    className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white outline-none transition-colors"
+                    placeholder="••••••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-3.5 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95 disabled:opacity-70 disabled:hover:scale-100 text-xs"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In to Dashboard</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+              Don&apos;t have an account yet?{" "}
+              <Link href="/sign-up" className="font-extrabold text-emerald-700 hover:text-emerald-800 transition-colors">
+                Start 14-day free trial
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -1,195 +1,97 @@
 "use client";
 
-import { useState } from "react";
-import {
-  AlertCircle,
-  CheckCircle2,
-  FileX,
-  MessageSquareOff,
-  MailWarning,
-  Ban,
-  ArrowRight,
-  Database,
-  Workflow,
-  Receipt,
-  IndianRupee,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, FileX, ShieldCheck, XCircle, Sparkles, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export function Problem() {
-  const [activeTab, setActiveTab] = useState<"problem" | "solution">("problem");
-
   return (
-    <section
-      className="py-24 bg-gray-50 border-y border-gray-200 overflow-hidden relative"
-      id="problem"
-    >
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-5 pointer-events-none">
-        <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] bg-emerald-400 rounded-full blur-[100px]" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] bg-red-400 rounded-full blur-[100px]" />
-      </div>
+    <section className="py-24 bg-white border-b border-emerald-100 relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-100/40 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">
-            Evolution of a Purchase
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Stop battling with chaos. Flip the switch to see the transformation.
-          </p>
-
-          {/* Interactive Toggle */}
-          <div className="inline-flex items-center bg-white rounded-full p-1.5 shadow-md border border-gray-200 mb-8 transition-colors duration-300">
-            <button
-              onClick={() => setActiveTab("problem")}
-              className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "problem" ? "bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              <AlertCircle className="w-4 h-4" />
-              The Chaos
-            </button>
-            <button
-              onClick={() => setActiveTab("solution")}
-              className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "solution" ? "bg-emerald-600 text-white shadow-md" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              The Solution
-            </button>
+      <div className="container mx-auto px-6 lg:px-12 max-w-6xl relative z-10">
+        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Before vs. After Transformation</span>
           </div>
+
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+            Why Indian MSMEs Switch to VyaparFlow
+          </h2>
+
+          <p className="text-slate-600 text-base font-normal">
+            See how automating your spend lifecycle replaces manual paperwork and invoice leakages with complete audit-ready clarity.
+          </p>
         </div>
 
-        {/* Morphing Card */}
-        <div className="max-w-5xl mx-auto">
-          <div className={`relative transition-all duration-500 transform`}>
-            {/* Content Container */}
-            <div
-              className={`bg-white rounded-3xl shadow-xl border overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "border-red-100 shadow-red-100/50" : "border-emerald-100 shadow-emerald-100/50"}`}
-            >
-              <div className="grid md:grid-cols-2">
-                {/* Left Side: Visual/Context */}
-                <div
-                  className={`p-10 flex flex-col justify-center relative overflow-hidden transition-colors duration-500 ${activeTab === "problem" ? "bg-red-50" : "bg-gradient-to-br from-emerald-600 to-teal-600"}`}
-                >
-                  {activeTab === "problem" ? (
-                    <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-500">
-                      <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-4 shadow-sm">
-                        <AlertCircle className="w-8 h-8" />
-                      </div>
-                      <h3 className="text-3xl font-bold text-gray-900">
-                        Fragmentation & Risk
-                      </h3>
-                      <p className="text-gray-700 leading-relaxed font-medium text-lg">
-                        Relying on scattered tools creates a breeding ground for
-                        errors, fraud, and delays. It&apos;s a house of cards
-                        waiting to fall.
-                      </p>
-                      <div className="grid grid-cols-2 gap-4 mt-8">
-                        <div className="bg-white/80 p-4 rounded-xl backdrop-blur-sm border border-red-200 shadow-sm">
-                          <div className="text-2xl font-bold text-red-600 mb-1">
-                            40%
-                          </div>
-                          <div className="text-xs text-red-800 font-bold uppercase tracking-wide">
-                            Time Wasted
-                          </div>
-                        </div>
-                        <div className="bg-white/80 p-4 rounded-xl backdrop-blur-sm border border-red-200 shadow-sm">
-                          <div className="text-2xl font-bold text-red-600 mb-1">
-                            High
-                          </div>
-                          <div className="text-xs text-red-800 font-bold uppercase tracking-wide">
-                            Compliance Risk
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-6 text-white animate-in slide-in-from-right-4 fade-in duration-500">
-                      <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-emerald-900/40">
-                        <CheckCircle2 className="w-8 h-8" />
-                      </div>
-                      <h3 className="text-3xl font-bold">Unified Control</h3>
-                      <p className="text-emerald-50 leading-relaxed font-medium text-lg">
-                        VyaparFlow centralizes everything. Vendors, invoices,
-                        and payments speak the same language in one secure
-                        ecosystem.
-                      </p>
-                      <div className="grid grid-cols-2 gap-4 mt-8">
-                        <div className="bg-emerald-700/40 p-4 rounded-xl backdrop-blur-sm border border-emerald-400/30">
-                          <div className="text-2xl font-bold text-white mb-1">
-                            100%
-                          </div>
-                          <div className="text-xs text-emerald-100 font-bold uppercase tracking-wide">
-                            Audit Trail
-                          </div>
-                        </div>
-                        <div className="bg-emerald-700/40 p-4 rounded-xl backdrop-blur-sm border border-emerald-400/30">
-                          <div className="text-2xl font-bold text-white mb-1">
-                            0%
-                          </div>
-                          <div className="text-xs text-emerald-100 font-bold uppercase tracking-wide">
-                            Data Loss
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+        {/* Side-by-Side Comparison Cards */}
+        <div className="grid md:grid-cols-2 gap-8 items-stretch">
+          {/* Old Way Card */}
+          <div className="bg-gradient-to-br from-rose-50/80 to-orange-50/40 border border-rose-200 rounded-3xl p-8 space-y-6 flex flex-col justify-between shadow-xs">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-rose-100 text-rose-700 shadow-2xs">
+                  <XCircle className="w-6 h-6" />
                 </div>
-
-                {/* Right Side: List Items */}
-                <div className="p-10 bg-white">
-                  <div className="space-y-8">
-                    {COMPARISON_DATA.map((item, index) => (
-                      <div key={index} className="group min-h-[70px]">
-                        {activeTab === "problem" ? (
-                          <div
-                            className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
-                            style={{ animationDelay: `${index * 100}ms` }}
-                          >
-                            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-colors border border-red-100">
-                              <item.problemIcon className="w-6 h-6 text-red-400 group-hover:text-red-600 transition-colors" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-gray-900 text-lg mb-1">
-                                {item.problemTitle}
-                              </h4>
-                              <p className="text-gray-500 text-sm leading-relaxed">
-                                {item.problemDesc}
-                              </p>
-                            </div>
-                          </div>
-                        ) : (
-                          <div
-                            className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
-                            style={{ animationDelay: `${index * 100}ms` }}
-                          >
-                            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition-colors border border-emerald-100">
-                              <item.solutionIcon className="w-6 h-6 text-emerald-600 group-hover:text-emerald-700 transition-colors" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-gray-900 text-lg mb-1">
-                                {item.solutionTitle}
-                              </h4>
-                              <p className="text-gray-500 text-sm leading-relaxed">
-                                {item.solutionDesc}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {activeTab === "problem" && (
-                    <div className="mt-12 pt-8 border-t border-gray-100 text-center animate-in fade-in duration-700">
-                      <button
-                        onClick={() => setActiveTab("solution")}
-                        className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:text-emerald-800 transition-colors group px-6 py-2 rounded-lg hover:bg-emerald-50"
-                      >
-                        See how we fix this
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-                  )}
+                <div>
+                  <h3 className="text-xl font-extrabold text-slate-900">The Old Manual Way</h3>
+                  <p className="text-xs text-rose-700 font-bold">Paper receipts, WhatsApp threads & Excel</p>
                 </div>
               </div>
+
+              <div className="space-y-3.5 text-xs text-slate-700 font-medium">
+                {[
+                  "Approvals lost in WhatsApp chats with zero audit history.",
+                  "Duplicate or overstated vendor bills slip through manual checks.",
+                  "Lost GST input tax credits due to unverified supplier tax filings.",
+                  "Finance team spends 5+ days reconciling POs and bank transfers.",
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-3.5 bg-white/90 rounded-xl border border-rose-200/80 shadow-2xs">
+                    <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-rose-200 text-xs text-rose-800 font-bold flex items-center justify-between">
+              <span>Result: Invoice leakage & compliance risk</span>
+              <span className="px-2.5 py-0.5 bg-rose-100 rounded-md text-[10px] uppercase">Manual Chaos</span>
+            </div>
+          </div>
+
+          {/* VyaparFlow Way Card */}
+          <div className="bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white border-2 border-emerald-300 rounded-3xl p-8 space-y-6 flex flex-col justify-between shadow-lg shadow-emerald-900/5">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-emerald-600 text-white shadow-sm">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-slate-900">The VyaparFlow Engine</h3>
+                  <p className="text-xs text-emerald-800 font-bold">Automated 3-way match & GST verified</p>
+                </div>
+              </div>
+
+              <div className="space-y-3.5 text-xs text-slate-800 font-semibold">
+                {[
+                  "Role-based approval hierarchy with 1-click approvals & full logs.",
+                  "Automated 3-way matching (PO vs. GRN vs. Invoice) stops overpayments.",
+                  "Real-time GSTIN & e-Way verification guarantees 100% tax credit.",
+                  "Release vendor payouts directly via Razorpay/UPI in minutes.",
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-3.5 bg-white rounded-xl border border-emerald-200 shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-slate-900">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-emerald-200 text-xs text-emerald-900 font-extrabold flex items-center justify-between">
+              <span>Result: 100% spend control & 5x faster cycle</span>
+              <span className="px-2.5 py-0.5 bg-emerald-200/80 rounded-md text-[10px] uppercase text-emerald-900">Audit Ready</span>
             </div>
           </div>
         </div>
@@ -197,45 +99,3 @@ export function Problem() {
     </section>
   );
 }
-
-const COMPARISON_DATA = [
-  {
-    problemTitle: "Spreadsheet & Paper Tracking",
-    problemDesc:
-      "Data hidden in offline files, prone to version errors and loss.",
-    problemIcon: FileX,
-    solutionTitle: "Centralized Vendor Database",
-    solutionDesc:
-      "Real-time cloud database accessible to all authorized team members.",
-    solutionIcon: Database,
-  },
-  {
-    problemTitle: "WhatsApp Approvals",
-    problemDesc:
-      "Informal sign-offs that get lost in chat history with no accountability.",
-    problemIcon: MessageSquareOff,
-    solutionTitle: "Structured Approval Workflows",
-    solutionDesc:
-      "Automated hierarchy-based approvals with digital signatures.",
-    solutionIcon: Workflow,
-  },
-  {
-    problemTitle: "Email Invoice Chaos",
-    problemDesc:
-      "Invoices buried in spam folders or lost in long email threads.",
-    problemIcon: MailWarning,
-    solutionTitle: "Dedicated Invoice Portal",
-    solutionDesc: "Vendors upload directly; system auto-matches with POs.",
-    solutionIcon: Receipt,
-  },
-  {
-    problemTitle: "Manual Bank Transfers",
-    problemDesc:
-      "Time-consuming data entry with high risk of typo-based payment errors.",
-    problemIcon: Ban,
-    solutionTitle: "Integrated Vendor Payments",
-    solutionDesc:
-      "One-click payments via Razorpay/UPI directly from the dashboard.",
-    solutionIcon: IndianRupee,
-  },
-];

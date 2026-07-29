@@ -1,332 +1,260 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/landing-page/Navbar";
 import { Footer } from "@/components/landing-page/Footer";
 import { CTA } from "@/components/landing-page/CTA";
-import { Check, ArrowRight, CheckCircle2, X } from "lucide-react";
-
-const PRICING_PLANS = [
-  {
-    name: "Starter",
-    subtitle: "For Small Teams",
-    desc: "Perfect for teams just starting their procurement journey.",
-    price: "₹999",
-    period: "/ month",
-    features: [
-      "Up to 5 users",
-      "50 Vendors",
-      "50 POs / month",
-      "Basic Analytics",
-      "Email Support",
-    ],
-    highlight: false,
-    cta: "Start Free Trial",
-    href: "/sign-up",
-  },
-  {
-    name: "Growth",
-    subtitle: "Most Popular",
-    desc: "Scale your operations with advanced controls and limitless potential.",
-    price: "₹2,999",
-    period: "/ month",
-    features: [
-      "Up to 20 users",
-      "Unlimited Vendors",
-      "500 POs / month",
-      "Advanced Budgeting",
-      "Priority Email & Chat Support",
-      "Custom Approval Workflows",
-      "Vendor Portal Access",
-    ],
-    highlight: true,
-    cta: "Start Free Trial",
-    href: "/sign-up",
-  },
-  {
-    name: "Enterprise",
-    subtitle: "For Large Organizations",
-    desc: "Custom solutions for complex compliance and security needs.",
-    price: "Custom",
-    period: "",
-    features: [
-      "Unlimited Users",
-      "Unlimited Transactions",
-      "Dedicated Account Manager",
-      "Custom ERP Integrations",
-      "On-Premise Deployment Option",
-      "SLA Guarantees",
-      "Audit & Compliance Reports",
-    ],
-    highlight: false,
-    cta: "Contact Sales",
-    href: "mailto:sales@vyaparflow.in",
-  },
-];
+import { Check, ArrowRight, CheckCircle2, X, ChevronDown, Sparkles } from "lucide-react";
 
 const COMPARISON_FEATURES = [
-  { name: "Vendor Management", starter: true, growth: true, enterprise: true },
-  { name: "Purchase Requests", starter: true, growth: true, enterprise: true },
+  { name: "Vendor Management Registry", starter: true, growth: true, enterprise: true },
+  { name: "Purchase Requests & Approvals", starter: true, growth: true, enterprise: true },
   {
-    name: "Approval Workflows",
+    name: "Approval Hierarchy Workflows",
     starter: "Basic",
     growth: "Advanced",
-    enterprise: "Custom",
+    enterprise: "Custom Rules",
   },
-  { name: "Budget Controls", starter: false, growth: true, enterprise: true },
-  { name: "GST Verification", starter: true, growth: true, enterprise: true },
-  { name: "3-Way Matching", starter: false, growth: true, enterprise: true },
-  { name: "ERP Integration", starter: false, growth: false, enterprise: true },
+  { name: "Department Budget Controls", starter: false, growth: true, enterprise: true },
+  { name: "Live GSTIN & e-Way Verification", starter: true, growth: true, enterprise: true },
+  { name: "AI 3-Way Invoice Matching", starter: false, growth: true, enterprise: true },
+  { name: "Razorpay / UPI Direct Payouts", starter: false, growth: true, enterprise: true },
+  { name: "ERP Integration (Tally / Zoho)", starter: false, growth: false, enterprise: true },
   {
-    name: "Dedicated Support",
+    name: "Dedicated Account Manager & SLA",
     starter: false,
     growth: false,
     enterprise: true,
   },
 ];
 
+const FAQS = [
+  {
+    q: "Can I upgrade or downgrade my plan later?",
+    a: "Yes, you can change your subscription tier anytime from your company billing settings. Pro-rated differences automatically apply to your next billing cycle.",
+  },
+  {
+    q: "Is there a free trial available?",
+    a: "Yes! Every new account gets a 14-day free trial on the Growth plan with full access to purchase requests, 3-way invoice matching, and GST verification. No credit card required.",
+  },
+  {
+    q: "How does VyaparFlow verify vendor GSTINs?",
+    a: "VyaparFlow integrates directly with the official GST portal API to verify vendor registration status, filing frequency, and tax credit eligibility automatically.",
+  },
+  {
+    q: "Is my financial & payment data secure?",
+    a: "Yes, all payment disbursements are processed through PCI-DSS compliant bank gateways (RazorpayX) with end-to-end 256-bit SSL encryption.",
+  },
+];
+
 export default function PricingPage() {
+  const [isAnnual, setIsAnnual] = useState(true);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const plans = [
+    {
+      name: "Starter",
+      subtitle: "For Small Teams",
+      desc: "Essential tools for growing teams starting to digitize purchase requests.",
+      priceMonthly: "₹999",
+      priceAnnual: "₹799",
+      period: "/ month",
+      features: [
+        "Up to 5 User Seats",
+        "50 Active Vendor Profiles",
+        "50 Approved POs / month",
+        "GSTIN Filing Checks",
+        "Standard Email Support",
+      ],
+      highlight: false,
+      cta: "Start 14-Day Free Trial",
+      href: "/sign-up",
+    },
+    {
+      name: "Growth",
+      subtitle: "Most Popular",
+      desc: "Complete spend control for scaling businesses with multi-level approvals.",
+      priceMonthly: "₹2,999",
+      priceAnnual: "₹2,399",
+      period: "/ month",
+      features: [
+        "Up to 20 User Seats",
+        "Unlimited Vendor Profiles",
+        "500 Approved POs / month",
+        "3-Way Invoice Matching",
+        "Department Budget Controls",
+        "RazorpayX Bank Payouts",
+        "Priority Support (24/7)",
+      ],
+      highlight: true,
+      cta: "Start 14-Day Free Trial",
+      href: "/sign-up",
+    },
+    {
+      name: "Enterprise",
+      subtitle: "Custom Governance",
+      desc: "Tailored procurement operating system for large firms & multi-branch groups.",
+      priceMonthly: "Custom",
+      priceAnnual: "Custom",
+      period: "",
+      features: [
+        "Unlimited User Seats",
+        "Unlimited POs & Invoices",
+        "Custom ERP Sync (Tally / Zoho)",
+        "Dedicated Account Manager",
+        "Custom SLA & Audit Reports",
+      ],
+      highlight: false,
+      cta: "Contact Enterprise Sales",
+      href: "mailto:sales@vyaparflow.in",
+    },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 font-sans selection:bg-emerald-500/30 selection:text-emerald-900">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-emerald-50/60 via-teal-50/20 to-white text-slate-900 font-sans selection:bg-emerald-500/20 selection:text-emerald-900">
       <Navbar />
 
-      <main className="flex-1 pt-20">
-        {/* Hero Section */}
-        <section className="relative py-24 lg:py-32 overflow-hidden bg-emerald-950 text-center">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent rounded-full blur-[100px] pointer-events-none" />
-
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white/5 border border-white/10 text-emerald-300 text-sm font-medium backdrop-blur-md">
-              Simple, Transparent Pricing
+      <main className="flex-1 pt-28 pb-20">
+        {/* Page Hero */}
+        <section className="relative py-16 text-center overflow-hidden">
+          <div className="container mx-auto px-6 lg:px-12 relative z-10 space-y-4 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-emerald-200 shadow-2xs text-emerald-800 text-xs font-extrabold">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Predictable & Transparent Pricing</span>
             </div>
 
-            <h1 className="text-4xl lg:text-7xl font-bold tracking-tight text-white mb-6">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
               Invest in{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
-                Clarity
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700">
+                Procurement Clarity.
               </span>
-              , Not Chaos.
             </h1>
-            <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed mb-10">
-              Choose the plan that fits your growth stage. No hidden fees. No
-              credit card required for trial.
+            <p className="text-slate-600 text-base font-normal">
+              Transparent plans tailored for Indian MSMEs. No hidden fees. Cancel anytime during your 14-day free trial.
             </p>
+
+            {/* Monthly / Annual Billing Toggle */}
+            <div className="pt-6 flex justify-center items-center gap-4">
+              <span className={`text-xs font-bold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>
+                Monthly Billing
+              </span>
+              <button
+                onClick={() => setIsAnnual(!isAnnual)}
+                className="w-13 h-7.5 bg-slate-200 border border-slate-300 rounded-full p-1 transition-colors cursor-pointer"
+              >
+                <div
+                  className={`w-5.5 h-5.5 rounded-full bg-emerald-600 transition-transform ${
+                    isAnnual ? "translate-x-5.5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-bold ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>
+                  Annual Billing
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  SAVE 20%
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Pricing Cards */}
-        <section className="py-24 relative">
-          <div className="container mx-auto px-4 relative z-20">
-            <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {PRICING_PLANS.map((plan, i) => (
+        {/* Pricing Cards Grid */}
+        <section className="py-8 relative">
+          <div className="container mx-auto px-6 lg:px-12 relative z-10 max-w-6xl">
+            <div className="grid md:grid-cols-3 gap-6 items-stretch">
+              {plans.map((plan, idx) => (
                 <div
-                  key={i}
-                  className={`
-                    flex flex-col rounded-3xl p-8 relative transition-all duration-300
-                    ${
-                      plan.highlight
-                        ? "bg-emerald-900 text-white ring-1 ring-emerald-500/50 shadow-2xl shadow-emerald-900/40 translate-y-[-16px] z-10"
-                        : "bg-white text-slate-900 border border-slate-200 shadow-xl shadow-slate-200/50"
-                    }
-                  `}
+                  key={idx}
+                  className={`flex flex-col justify-between rounded-3xl p-8 transition-all relative ${
+                    plan.highlight
+                      ? "bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-xl shadow-emerald-900/20 md:-translate-y-2 border-2 border-emerald-400"
+                      : "bg-white text-slate-900 border border-emerald-200/90 shadow-sm"
+                  }`}
                 >
-                  {/* Popular Badge */}
                   {plan.highlight && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-400 to-teal-400 text-emerald-950 text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-emerald-900 text-[10px] font-extrabold px-3 py-1 rounded-full shadow-md uppercase tracking-wider border border-emerald-200">
                       MOST POPULAR
                     </div>
                   )}
 
-                  <div className="mb-8">
-                    <h3
-                      className={`text-xl font-semibold mb-2 ${plan.highlight ? "text-white" : "text-slate-900"}`}
-                    >
-                      {plan.name}
-                    </h3>
-                    <p
-                      className={`text-sm ${plan.highlight ? "text-emerald-200/80" : "text-slate-500"}`}
-                    >
-                      {plan.desc}
-                    </p>
-                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-2xl font-extrabold mb-1">{plan.name}</h3>
+                      <p className={`text-xs font-medium ${plan.highlight ? "text-emerald-100" : "text-slate-500"}`}>
+                        {plan.desc}
+                      </p>
+                    </div>
 
-                  <div className="mb-8">
-                    <div className="flex items-baseline gap-1">
-                      <span
-                        className={`text-5xl font-bold tracking-tight ${plan.highlight ? "text-white" : "text-slate-900"}`}
-                      >
-                        {plan.price}
-                      </span>
-                      <span
-                        className={`text-sm font-medium ${plan.highlight ? "text-emerald-200/60" : "text-slate-400"}`}
-                      >
-                        {plan.period}
-                      </span>
+                    <div className="py-4 border-y border-slate-200/40">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-extrabold tracking-tight">
+                          {isAnnual ? plan.priceAnnual : plan.priceMonthly}
+                        </span>
+                        <span className={`text-xs font-semibold ${plan.highlight ? "text-emerald-100" : "text-slate-500"}`}>
+                          {plan.period}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5 text-xs font-semibold">
+                      {plan.features.map((f, fIdx) => (
+                        <div key={fIdx} className="flex items-center gap-2.5">
+                          <CheckCircle2 className={`w-4 h-4 shrink-0 ${plan.highlight ? "text-white" : "text-emerald-600"}`} />
+                          <span>{f}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  <hr
-                    className={`border-t mb-8 ${plan.highlight ? "border-white/10" : "border-slate-100"}`}
-                  />
-
-                  <ul className="space-y-4 mb-8 flex-1">
-                    {plan.features.map((feature, j) => (
-                      <li key={j} className="flex items-start gap-3 text-sm">
-                        <CheckCircle2
-                          className={`w-5 h-5 shrink-0 ${plan.highlight ? "text-emerald-400" : "text-emerald-600"}`}
-                        />
-                        <span
-                          className={
-                            plan.highlight
-                              ? "text-emerald-100"
-                              : "text-slate-600"
-                          }
-                        >
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    href={plan.href}
-                    className={`
-                      w-full py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group
-                      ${
+                  <div className="pt-8">
+                    <Link
+                      href={plan.href}
+                      className={`inline-flex items-center justify-center w-full py-3.5 px-5 rounded-2xl text-xs font-extrabold transition-all shadow-sm ${
                         plan.highlight
-                          ? "bg-white text-emerald-900 hover:bg-emerald-50 hover:shadow-lg hover:shadow-white/10"
-                          : "bg-emerald-950 text-white hover:bg-emerald-900 hover:shadow-lg hover:shadow-emerald-900/20"
-                      }
-                    `}
-                  >
-                    {plan.cta}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Comparison Table */}
-        <section className="py-24 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
-                Compare Features
-              </h2>
-              <p className="text-slate-600">
-                Detailed breakdown of what&apos;s included.
-              </p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr>
-                    <th className="p-4 border-b-2 border-slate-100 w-1/3"></th>
-                    <th className="p-4 border-b-2 border-slate-100 font-bold text-slate-900 text-center">
-                      Starter
-                    </th>
-                    <th className="p-4 border-b-2 border-slate-100 font-bold text-emerald-700 text-center bg-emerald-50/50 rounded-t-xl">
-                      Growth
-                    </th>
-                    <th className="p-4 border-b-2 border-slate-100 font-bold text-slate-900 text-center">
-                      Enterprise
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {COMPARISON_FEATURES.map((row, i) => (
-                    <tr
-                      key={i}
-                      className="group hover:bg-slate-50/50 transition-colors"
+                          ? "bg-white text-slate-900 hover:bg-emerald-50"
+                          : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                      }`}
                     >
-                      <td className="p-4 border-b border-slate-100 font-medium text-slate-700">
-                        {row.name}
-                      </td>
-                      <td className="p-4 border-b border-slate-100 text-center text-slate-600">
-                        {row.starter === true ? (
-                          <Check className="w-5 h-5 text-emerald-500 mx-auto" />
-                        ) : row.starter === false ? (
-                          <X className="w-5 h-5 text-slate-300 mx-auto" />
-                        ) : (
-                          <span className="text-sm font-medium">
-                            {row.starter}
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4 border-b border-slate-100 text-center text-slate-600 bg-emerald-50/30 group-hover:bg-emerald-50/80 transition-colors">
-                        {row.growth === true ? (
-                          <Check className="w-5 h-5 text-emerald-600 mx-auto" />
-                        ) : row.growth === false ? (
-                          <X className="w-5 h-5 text-slate-300 mx-auto" />
-                        ) : (
-                          <span className="text-sm font-medium text-emerald-900">
-                            {row.growth}
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4 border-b border-slate-100 text-center text-slate-600">
-                        {row.enterprise === true ? (
-                          <Check className="w-5 h-5 text-emerald-500 mx-auto" />
-                        ) : row.enterprise === false ? (
-                          <X className="w-5 h-5 text-slate-300 mx-auto" />
-                        ) : (
-                          <span className="text-sm font-medium">
-                            {row.enterprise}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      <span>{plan.cta}</span>
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="py-24 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-slate-600">
-                Everything you need to know about billing.
-              </p>
+        {/* Feature Matrix & FAQ Accordion */}
+        <section className="py-16 relative">
+          <div className="container mx-auto px-6 lg:px-12 relative z-10 max-w-4xl">
+            <div className="text-center mb-8 space-y-1">
+              <h2 className="text-2xl font-bold text-slate-900">Frequently Asked Questions</h2>
             </div>
 
-            <div className="space-y-6">
-              {[
-                {
-                  q: "Can I cancel my subscription anytime?",
-                  a: "Yes, you can cancel your subscription at any time. Your access will continue until the end of your current billing period.",
-                },
-                {
-                  q: "Is there a free trial?",
-                  a: "We offer a 14-day free trial on the Starter and Growth plans. No credit card required to start.",
-                },
-                {
-                  q: "What payment methods do you accept?",
-                  a: "We accept all major credit cards, debit cards, UPI, and net banking via our secure payment partner Razorpay.",
-                },
-                {
-                  q: "Do you offer GST invoices?",
-                  a: "Yes, you will receive a GST-compliant invoice for every payment made on the platform.",
-                },
-              ].map((faq, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <h3 className="font-bold text-slate-900 text-lg mb-2">
-                    {faq.q}
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
+            <div className="space-y-3">
+              {FAQS.map((faq, fIdx) => {
+                const isOpen = openFaq === fIdx;
+                return (
+                  <div key={fIdx} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : fIdx)}
+                      className="w-full p-5 text-left flex items-center justify-between font-bold text-xs text-slate-900 hover:text-emerald-700 transition-colors"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? "rotate-180 text-emerald-600" : ""}`} />
+                    </button>
+                    {isOpen && (
+                      <div className="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3 font-normal">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

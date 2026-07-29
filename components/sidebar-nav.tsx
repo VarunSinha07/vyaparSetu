@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Users,
   Truck,
-  Settings,
   FileText,
   ShoppingBag,
   ClipboardList,
@@ -31,7 +30,7 @@ const navSections: NavSection[] = [
   {
     items: [
       {
-        title: "Dashboard",
+        title: "Overview",
         href: "/dashboard",
         icon: LayoutDashboard,
         exact: true,
@@ -39,7 +38,7 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    title: "Procurement",
+    title: "Procurement Workflows",
     items: [
       {
         title: "Purchase Requests",
@@ -52,32 +51,32 @@ const navSections: NavSection[] = [
         icon: ShoppingBag,
       },
       {
-        title: "Invoices",
+        title: "3-Way Invoices",
         href: "/dashboard/invoices",
         icon: Receipt,
       },
     ],
   },
   {
-    title: "Management",
+    title: "Directory & Access",
     items: [
       {
-        title: "Manage Team",
-        href: "/dashboard/team",
-        icon: Users,
-      },
-      {
-        title: "Vendors",
+        title: "Vendor Registry",
         href: "/dashboard/vendors",
         icon: Truck,
+      },
+      {
+        title: "Team & Roles",
+        href: "/dashboard/team",
+        icon: Users,
       },
     ],
   },
   {
-    title: "Analytics",
+    title: "Analytics & Compliance",
     items: [
       {
-        title: "Reports",
+        title: "Spend Reports",
         href: "/dashboard/reports",
         icon: BarChart3,
       },
@@ -88,58 +87,48 @@ const navSections: NavSection[] = [
       },
     ],
   },
-  {
-    title: "System",
-    items: [
-      {
-        title: "Settings",
-        href: "#", // Placeholder as per original
-        icon: Settings,
-      },
-    ],
-  },
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto scrollbar-hide">
+    <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto scrollbar-hide">
       {navSections.map((section, sectionIdx) => (
-        <div key={sectionIdx} className="space-y-2">
+        <div key={sectionIdx} className="space-y-1">
           {section.title && (
-            <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <h3 className="px-3 text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider">
               {section.title}
             </h3>
           )}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {section.items.map((item) => {
               const isActive = item.exact
                 ? pathname === item.href
                 : pathname.startsWith(item.href) && item.href !== "#";
+
+              const Icon = item.icon;
 
               return (
                 <Link
                   key={item.title}
                   href={item.href}
                   className={cn(
-                    "group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
+                    "group flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 outline-none",
                     isActive
-                      ? "bg-emerald-50 text-emerald-900 shadow-sm ring-1 ring-emerald-100"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:bg-gray-100",
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs font-extrabold"
+                      : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 active:bg-emerald-100",
                   )}
                 >
-                  <item.icon
+                  <Icon
                     className={cn(
-                      "w-5 h-5 shrink-0 transition-colors duration-200",
-                      isActive
-                        ? "text-emerald-600"
-                        : "text-gray-400 group-hover:text-gray-600",
+                      "w-4 h-4 shrink-0 transition-colors",
+                      isActive ? "text-white" : "text-slate-400 group-hover:text-emerald-700",
                     )}
                   />
                   <span>{item.title}</span>
                   {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   )}
                 </Link>
               );

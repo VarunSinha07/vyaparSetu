@@ -1,116 +1,160 @@
 "use client";
 
 import Link from "next/link";
-import { Building2, Menu, X } from "lucide-react";
+import {
+  Building2,
+  Menu,
+  X,
+  ArrowRight,
+  Sparkles,
+  Workflow,
+  CreditCard,
+  ChevronRight,
+} from "lucide-react";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const navLinks = [
+    { label: "Features", href: "/features", icon: Sparkles },
+    { label: "How It Works", href: "/how-it-works", icon: Workflow },
+    { label: "Pricing", href: "/pricing", icon: CreditCard },
+  ];
+
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1.5rem)] max-w-6xl transition-all duration-300 ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm py-3 supports-[backdrop-filter]:bg-white/60"
-          : "bg-white/90 backdrop-blur-sm border-b border-transparent py-5"
+          ? "bg-white/95 backdrop-blur-xl border border-emerald-200/90 shadow-xl shadow-emerald-900/5 py-2.5 px-5 sm:px-6 rounded-2xl"
+          : "bg-white/85 backdrop-blur-md border border-emerald-200/60 shadow-md shadow-emerald-900/5 py-3 px-5 sm:px-6 rounded-2xl"
       }`}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-gradient-to-br from-emerald-600 to-teal-700 p-2 rounded-lg group-hover:shadow-lg group-hover:shadow-emerald-600/30 transition-all duration-300">
-            <Building2 className="w-5 h-5 text-white" />
+      <div className="flex items-center justify-between">
+        {/* Brand Logo with Live Pulse Accent */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative">
+            <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 text-white p-2.5 rounded-xl shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-all duration-300">
+              <Building2 className="w-5 h-5" />
+            </div>
+            {/* Live Indicator Pulse */}
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-white"></span>
+            </span>
           </div>
-          <span className="text-xl font-bold text-gray-900 tracking-tight">
-            VyaparFlow
-          </span>
+
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg font-extrabold text-slate-900 tracking-tight leading-none group-hover:text-emerald-700 transition-colors">
+                VyaparFlow
+              </span>
+            </div>
+            <span className="text-[10px] font-bold text-emerald-700 tracking-wide uppercase mt-0.5">
+              Procurement & Spend
+            </span>
+          </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-700">
-          {["Features", "How It Works", "Pricing"].map((item) => (
-            <Link
-              key={item}
-              href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="px-3 py-2 rounded-lg hover:bg-gray-100 hover:text-emerald-600 transition-all duration-200"
-            >
-              {item}
-            </Link>
-          ))}
+        {/* Desktop Interactive Nav Items */}
+        <nav className="hidden md:flex items-center gap-1 bg-emerald-50/60 p-1 rounded-xl border border-emerald-100">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
+                  isActive
+                    ? "bg-white text-emerald-800 shadow-xs font-bold"
+                    : "text-slate-700 hover:text-emerald-800 hover:bg-white/80"
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-emerald-600" : "text-slate-400"}`} />
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Desktop Actions */}
+        {/* Desktop Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/sign-in"
-            className="px-4 py-2.5 text-sm font-semibold text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+            className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors"
           >
             Sign In
           </Link>
           <Link
             href="/sign-up"
-            className="group relative px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-semibold rounded-lg shadow-md shadow-emerald-600/30 hover:shadow-lg hover:shadow-emerald-600/50 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+            className="group relative inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs font-extrabold rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg hover:shadow-emerald-600/35 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative">Get Started</span>
+            <span className="relative z-10 flex items-center gap-1.5">
+              <span>Start Free Trial</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </span>
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="md:hidden p-2 text-slate-700 hover:bg-emerald-50 rounded-xl transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          {mobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
+          {mobileMenuOpen ? <X className="w-5 h-5 text-emerald-700" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-lg animate-in slide-in-from-top-2 duration-200">
-          <div className="px-4 py-4 space-y-2">
-            {["Features", "How It Works", "Pricing"].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="block px-4 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-emerald-600 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item}
-              </Link>
-            ))}
+        <div className="md:hidden mt-3 pt-3 border-t border-emerald-100 space-y-3 animate-in slide-in-from-top-2 duration-200">
+          <div className="space-y-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-700 text-xs font-bold hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-4 h-4 text-emerald-600" />
+                    <span>{link.label}</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </Link>
+              );
+            })}
+          </div>
 
-            <hr className="my-3 border-gray-200" />
-
-            <div className="flex gap-3 pt-2">
-              <Link
-                href="/sign-in"
-                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors text-center"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all text-center shadow-md"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Get Started
-              </Link>
-            </div>
+          <div className="pt-2 flex gap-2">
+            <Link
+              href="/sign-in"
+              className="flex-1 py-2.5 text-center rounded-xl border border-emerald-200 text-slate-700 font-bold hover:bg-emerald-50 transition-colors text-xs"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/sign-up"
+              className="flex-1 py-2.5 text-center rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold hover:from-emerald-700 transition-all text-xs shadow-md"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Start Free
+            </Link>
           </div>
         </div>
       )}
