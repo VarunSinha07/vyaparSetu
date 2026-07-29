@@ -251,7 +251,6 @@ export default function PurchaseRequestsPage() {
               [
                 CompanyRole.ADMIN,
                 CompanyRole.PROCUREMENT,
-                CompanyRole.EMPLOYEE,
                 CompanyRole.MANAGER,
               ] as CompanyRole[]
             ).includes(userRole) && (
