@@ -152,3 +152,80 @@ export function generateCompanyInviteEmail(data: {
 </html>
   `;
 }
+
+
+export function generatePasswordResetEmail(data: {
+  userName?: string | null;
+  userEmail: string;
+  resetLink: string;
+}): string {
+  const displayName = data.userName || "there";
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f3f4f6; }
+    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; margin-top: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .header { background: linear-gradient(135deg, #059669 0%, #0d9488 100%); padding: 40px 20px; text-align: center; }
+    .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .content { padding: 40px 30px; background-color: #ffffff; }
+    .welcome-text { font-size: 16px; color: #374151; margin-bottom: 20px; line-height: 1.6; }
+    .info-box { background-color: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 18px; margin-bottom: 26px; }
+    .info-label { font-size: 13px; color: #4b5563; margin-bottom: 2px; }
+    .info-email { font-weight: 700; color: #065f46; font-size: 15px; }
+    .cta-container { text-align: center; margin: 32px 0; }
+    .cta-button { background-color: #059669; color: #ffffff !important; padding: 16px 36px; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3); transition: background-color 0.2s; }
+    .cta-button:hover { background-color: #047857; }
+    .security-note { background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #92400e; margin: 24px 0; line-height: 1.5; }
+    .link-backup { margin-top: 28px; font-size: 12px; color: #6b7280; word-break: break-all; text-align: center; border-top: 1px solid #f3f4f6; padding-top: 20px; }
+    .link-backup a { color: #059669; text-decoration: none; }
+    .footer { background-color: #f9fafb; padding: 26px 20px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+    .expiry-note { font-size: 12px; color: #ef4444; margin-top: 8px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>VyaparFlow</h1>
+    </div>
+    <div class="content">
+      <h2 style="color: #111827; margin-top: 0; font-size: 22px; font-weight: 700;">Password Reset Request</h2>
+      
+      <p class="welcome-text">
+        Hello <strong>${displayName}</strong>,
+      </p>
+      <p class="welcome-text">
+        We received a request to reset the password for your VyaparFlow account. Click the button below to choose a new password:
+      </p>
+
+      <div class="info-box">
+        <div class="info-label">Account email</div>
+        <div class="info-email">${data.userEmail}</div>
+      </div>
+
+      <div class="cta-container">
+        <a href="${data.resetLink}" class="cta-button">Reset My Password</a>
+      </div>
+
+      <div class="security-note">
+        🔒 <strong>Security Tip:</strong> This link is only valid for <strong>1 hour</strong>. If you did not request a password reset, you can safely ignore this email — your account remains fully protected.
+      </div>
+
+      <div class="link-backup">
+        <p style="margin-bottom: 6px;">If the button above does not work, copy and paste this link into your browser:</p>
+        <a href="${data.resetLink}">${data.resetLink}</a>
+        <p class="expiry-note">This link will expire in 60 minutes.</p>
+      </div>
+    </div>
+    <div class="footer">
+      <p style="margin: 0 0 4px 0;">&copy; ${new Date().getFullYear()} VyaparFlow Technologies Inc. All rights reserved.</p>
+      <p style="margin: 0;">Automated Procurement & Spend Management.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
